@@ -1,0 +1,1 @@
+Write a command-line tool wordstats.py that takes one text file path as an argument and prints: the line count, the word count, and the 5 most frequent words (lowercased, ties broken alphabetically), each labeled. Also create a sample input sample.txt of at least 30 non-empty lines of varied English text, and demo.md showing the tool's real printed output when run on sample.txt.

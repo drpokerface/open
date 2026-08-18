@@ -1,0 +1,1 @@
+Build a single-file webpage page.html: a temperature converter between Celsius and Fahrenheit with a numeric input field, a convert button, a direction selector (C to F or F to C), and a result element that shows the converted value to one decimal place. Implement it in plain HTML and vanilla JavaScript only - no external resources - so it works offline from the file alone.

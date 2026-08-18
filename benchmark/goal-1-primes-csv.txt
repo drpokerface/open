@@ -1,0 +1,1 @@
+Create a CSV file named primes.csv containing the first 50 prime numbers, one per row, with header columns n,prime where n is the 1-based index. Then create report.md stating the count of primes, the largest prime, and their sum - each value recomputed by reading primes.csv itself, not remembered from generation.
