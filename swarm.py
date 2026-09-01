@@ -16,6 +16,7 @@
 #   python swarm.py status            read-only dashboard
 #   python swarm.py amend             propose ONE philosophy amendment from board failures
 #   python swarm.py benchmark         score the system on benchmark/ goals (needs ENABLE_BENCHMARK=1)
+#   python swarm.py library           owner-side: ratify harvested playbooks/tools, refresh calibration
 #
 # v7 SELF-AMENDMENT (swarm.py amend) - GATE-SAFE BY CONSTRUCTION:
 #   Ratified amendments live in amendments.md and are appended to the PHILOSOPHY prompt
@@ -33,6 +34,20 @@
 #   a fresh seed process. It turns "the system got better" into a measured number - and
 #   it SPENDS REAL TOKENS every run (capped per goal by BENCH_TOKEN_BUDGET / BENCH_MAX_TURNS).
 #
+# v8 ECONOMY + LIBRARY + COST-AWARE AMEND:
+#   providers.md is the tool CATALOG (a row is usable only when its key env var exists;
+#   keys live in .env, never in the repo). Every model/media call an agent makes routes
+#   through metered.py -> spend.jsonl in rupees; STATUS shows it and MONEY_BUDGET halts
+#   the run at the ceiling. Verified wins are HARVESTED (playbook + optional tool) into
+#   library/proposals/, owner-ratified via `python swarm.py library` into library/, and
+#   copied into every future seed workspace - reuse beats rebuild. OWNER-SCORE: n/10
+#   comments on issues become library/calibration.md (ground truth for judge taste) and
+#   scores under 7 join amend's failure evidence. The benchmark now reports (passes, ₹)
+#   and AMEND_AUTO ratifies only on more passes - or equal passes at >=20% lower cost.
+#   v8.1: SELF-CONTAINED - on any subcommand this file materializes its own companions
+#   (providers.md, library/, the media bench goal) when absent; deploying = copying
+#   swarm.py + .env into a git clone. Missing git or pip deps exit with instructions.
+#
 # ENV KNOBS (.env in the current folder is read at import; children inherit the env):
 #   REPO, GITHUB_TOKEN, GEMINI_API_KEY, AGENT_ID           identity + wiring (required)
 #   ALLOW_SELF_VERIFY=1       one machine may verify its own results (solo testing)
@@ -42,6 +57,7 @@
 #   MAX_TURNS=80  TOKEN_BUDGET=3000000                    seed ceilings
 #   ENABLE_BENCHMARK=0  BENCHMARK_DIR=benchmark  AMEND_AUTO=0
 #   BENCH_TOKEN_BUDGET=300000  BENCH_MAX_TURNS=25  BENCH_TIMEOUT_SECONDS=1800
+#   MONEY_BUDGET=500 (₹ ceiling per seed run, from spend.jsonl)  BENCH_MONEY_BUDGET=75
 #
 # SAFETY: this system executes AI-generated Python on your machine - run it in a spare
 # folder, account, or VM; keep the repo private; never commit .env (worker writes your
@@ -49,8 +65,11 @@
 
 import os, sys, re, json, time, shutil, stat, subprocess
 from datetime import datetime, timezone
-import requests
-from google import genai
+try:
+    import requests
+    from google import genai
+except ImportError as _e:   # v8.1: a clean instruction beats a traceback
+    sys.exit("missing dependency (" + str(_e) + ") - run: python -m pip install -U google-genai requests")
 
 def load_env():
     # convenience: read KEY=VALUE lines from .env if present (never overrides real env)
@@ -66,6 +85,7 @@ FAST_MODEL, SMART_MODEL = "gemini-3.5-flash", "gemini-3.1-pro-preview"
 MAX_TURNS = int(os.environ.get("MAX_TURNS", "80"))
 MAX_REJECTIONS = 5
 TOKEN_BUDGET = int(os.environ.get("TOKEN_BUDGET", "3000000"))
+MONEY_BUDGET = float(os.environ.get("MONEY_BUDGET", "500"))   # v8: ₹ ceiling on metered agent spend per run
 WORKSPACE, tokens_used, client = "workspace", 0, None
 REPO = OWNER = ME = ""          # bound from .env and the GitHub API per subcommand
 
@@ -181,10 +201,10 @@ run in a separate context from generation: a fresh subprocess, or a fresh model 
 receives ONLY the artifact and the check spec - never the generator's reasoning, hopes,
 or excuses. Decompose big work into small subtask calls for the same reason: a call
 carrying one objective and one check hallucinates less, and cannot defend earlier
-mistakes it never saw. Inside your code you have the model:
-    from google import genai
-    client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
-    text = client.models.generate_content(model="gemini-3.5-flash", contents=prompt).text
+mistakes it never saw. Inside your code you have the model - always through the meter
+(metered.py, already in your workspace, logs every call's rupees to spend.jsonl):
+    from metered import generate, upload
+    text = generate("gemini-3.5-flash", prompt).text
 Use "gemini-3.5-flash" for routine subtasks and checks, "gemini-3.5-pro" for hard
 planning and judging; structured JSON via config={"response_mime_type":
 "application/json", "response_schema": {...}}. Store reusable prompts as files instead of
@@ -195,16 +215,31 @@ Any artifact aimed at human senses - an image, a rendered page, audio, video - i
 INVISIBLE to you until a fresh model call has actually looked at it. Your programs
 print text; they cannot see. Perceive by sending the artifact ITSELF to a fresh call
 that receives only it and your question or rubric:
-    handle = client.files.upload(file="scratch/frame_014.png")
-    seen = client.models.generate_content(model="gemini-3.5-flash", contents=[rubric, handle]).text
+    handle = upload("scratch/frame_014.png")
+    seen = generate("gemini-3.5-flash", [rubric, handle]).text
 Probe that surface with one tiny file before building a pipeline on it. Print what the
 judge saw next to what you intended - the gap between the two is your work list. A
 perceptual claim ("legible", "well-composed", "sounds natural", "motion is smooth")
 turns green only by perception, never because the code that produced the artifact
-exited 0. The same client can also GENERATE media where the API and your key allow it
+exited 0. The same API can also GENERATE media where your catalog and keys allow it
 (images, speech - probe which models you can reach and try one tiny generation before
-building around one); every generator is a tool under the node contract - untrusted
-until your senses have confirmed its output.
+building around one, and meter every generation through metered.generate_media); every
+generator is a tool under the node contract - untrusted until your senses have
+confirmed its output.
+
+=== THE CATALOG AND THE METER (tools and money) ===
+providers.md in your workspace, when present, is the CATALOG: the outside tools you may
+use - model APIs, media generators, free local tools - each with how to call it, which
+env var holds its key, and its unit cost. A row is USABLE only when its key exists in
+os.environ; probe a row with one tiny call before building on it, and record the
+measured cost in notes.md. Money is METERED: route every model and media call through
+metered.py so each rupee lands in spend.jsonl - STATUS shows money spent against the
+budget and the loop halts at the ceiling; a generation that bypasses the meter violates
+the honesty law. Choose the cheapest adequate tier from the catalog (free and local
+tools count). When the catalog holds nothing adequate for a needed capability, post
+PROPOSE-PROVIDER on your swarm channel (when your goal defines one) - name the
+capability, the best candidate service you found, its pricing, and what it unlocks -
+then continue on the best reachable tier without waiting.
 
 === THE OUTSIDE ANCHOR (human quality is defined outside you) ===
 When success lives in human reception - engaging, beautiful, funny, persuasive,
@@ -313,6 +348,10 @@ same attempt harder.
 - FIRST-LINE LAW: every file's first line states what it is for (tools carry their trust
   tag there). The index shows ONLY first lines; a mute first line is an invisible file.
 - SCRATCH: tests, probes, and fault-proofs write only under scratch/.
+- THE LIBRARY: library/ in your workspace, when present, holds playbooks and validated
+  tools harvested from past VERIFIED wins, each with measured costs - search it FIRST;
+  reuse beats rebuild. library/calibration.md holds the owner's own 0-10 scores of past
+  deliverables: ground truth for taste - show it to your judges and anchor rubrics to it.
 - SCOPE, NEVER QUALITY: when budget or time collides with the bar, shrink SCOPE, never
   REALNESS - four real scenes beat eight fake ones. A placeholder, stub, or synthetic
   stand-in posing as finished work is FRAUD, the one unforgivable output: deliver less,
@@ -330,8 +369,9 @@ same attempt harder.
   prejudice. Costing is momentary - never continuous accounting. Probing, verification,
   and judging are EXEMPT: never economize on looking. Small probes before big builds;
   cheap model for routine calls; converge while budget remains. Media calls made
-  inside your own code are INVISIBLE to the token meter - tally them yourself in
-  notes.md and spend generation like the scarce resource it is.
+  inside your own code never hit the token meter, but their rupees DO hit spend.jsonl
+  through metered.py - the money line in STATUS is a hard ceiling; tally generation
+  units in notes.md and spend them like the scarce resource they are.
 - ENVIRONMENT: Python 3 with pip and network; GEMINI_API_KEY is in os.environ and is
   inherited by every subprocess you start.
 
@@ -443,8 +483,9 @@ Rules:
   task depends on task 1 via artifacts_needed and must obey its constitution.
 - If the goal produces a composite or perceptual artifact (video, app, site, or any
   deliverable assembled from parts), the task AFTER the constitution is a TRACER SLICE: one
-  task that first PROBES for the strongest generation tools and models the API key
-  can actually reach (images, speech, video - primitive fallbacks like hand-drawn
+  task that first PROBES for the strongest generation tools and models actually
+  reachable - consult the catalog in providers.md when provided, plus the API keys
+  present (images, speech, video - primitive fallbacks like hand-drawn
   shapes are forbidden unless the probe proves no better tier is reachable) and
   records the findings in capabilities.md, then builds a TINY but COMPLETE end-to-end
   version of the final deliverable (for a video: ~10 seconds, one scene, one voiced
@@ -506,6 +547,10 @@ THE COMMENT under review (posted on issue #{n}):
 
 For a QUESTION: decision="answer"; put a short, decisive answer in reply (title and body
 stay empty).
+For a PROPOSE-PROVIDER (a request for an outside service or API the tool catalog lacks):
+decision="answer"; you cannot subscribe or add keys, so the reply must state the request
+is QUEUED FOR THE OWNER and restate its one-line pitch (capability, candidate service,
+price, what it unlocks) so the owner can decide from the arbiter console.
 For a PROPOSE-TASK: decision="create" only if it earns its place and budget remains,
 else decision="reject" with the honest reason in reply. When creating, write the title
 and a FULLY self-contained body in the board's conventions: first lines
@@ -559,6 +604,46 @@ THE PROPOSED AMENDMENT:
 {amendment}
 """
 
+# ================================================================ v8 HARVEST PROMPTS
+# Compiling wins: after a verified pass, a fresh mind distills the reusable residue.
+HARVEST_PROMPT = """
+You are harvesting reusable capability from ONE VERIFIED WIN of an autonomous agent
+swarm - work that just passed independent verification. You are a fresh mind. Decide
+whether this win contains anything worth keeping for FUTURE, DIFFERENT goals:
+- a PLAYBOOK: a short, general, step-by-step recipe (markdown) another agent could
+  follow to do this CLASS of task again faster and cheaper - name the tools and models
+  used, the order of work, the checks that mattered, and the MEASURED costs from the
+  spend ledger. General means it helps the whole class, never a restatement of this one
+  task's text.
+- optionally ONE small reusable TOOL: a single self-contained .py file shown in the
+  evidence, promoted VERBATIM (tool_name = its filename, tool_code = its exact content
+  from the evidence; never write new code here). Otherwise leave both "".
+- facts: up to 3 one-line durable facts discovered (real unit prices, capability
+  limits), or "".
+If nothing generalizes beyond this task, decision="none". Never invent costs or steps
+absent from the evidence.
+
+THE TASK THAT WAS COMPLETED:
+{task}
+
+THE WINNING WORKSPACE'S EVIDENCE (file index, notes.md, criteria.md, ledger, tools):
+{evidence}
+"""
+
+HARVEST_AUDIT = """
+You are a hostile auditor of ONE harvest proposal - a playbook (and optionally one tool)
+distilled from a verified win, about to enter an agent swarm's standing library and be
+copied into every future workspace. Library rot is worse than no library. APPROVE only
+if the playbook is GENERAL (would help other goals of its class, not a restatement of
+one task), CONCRETE (names tools, steps, order, checks, and real measured costs -
+reject invented numbers), HONEST, and SHORT enough to earn its permanent context cost;
+and the tool, if any, is small, self-contained, and plausibly reusable. Otherwise
+REJECT and name the problem precisely in problems. When in doubt, REJECT.
+
+THE PROPOSAL:
+{proposal}
+"""
+
 # ---------------------------------------------------- reply shapes (API-enforced)
 TURN_SCHEMA = {"type": "OBJECT", "required": ["thought", "action", "code", "timeout_seconds"], "properties": {"thought": {"type": "STRING"},
     "action": {"type": "STRING", "enum": ["code", "done", "impossible"]}, "code": {"type": "STRING"}, "timeout_seconds": {"type": "INTEGER"}}}
@@ -573,6 +658,9 @@ ARBITER_SCHEMA = {"type": "OBJECT", "required": ["decision", "title", "body", "r
 AMEND_SCHEMA = {"type": "OBJECT", "required": ["decision", "title", "text", "why"], "properties": {
     "decision": {"type": "STRING", "enum": ["propose", "none"]}, "title": {"type": "STRING"},
     "text": {"type": "STRING"}, "why": {"type": "STRING"}}}
+HARVEST_SCHEMA = {"type": "OBJECT", "required": ["decision", "title", "playbook", "tool_name", "tool_code", "facts"], "properties": {
+    "decision": {"type": "STRING", "enum": ["propose", "none"]}, "title": {"type": "STRING"}, "playbook": {"type": "STRING"},
+    "tool_name": {"type": "STRING"}, "tool_code": {"type": "STRING"}, "facts": {"type": "STRING"}}}
 
 # ---------------------------------------------------------------- shared helpers
 def llm():
@@ -620,7 +708,10 @@ def gh(method, path, **kwargs):
     return r.json() if r.text else {}
 
 def git(*args):
-    return subprocess.run(["git"] + list(args), capture_output=True, text=True)
+    try:
+        return subprocess.run(["git"] + list(args), capture_output=True, text=True)
+    except FileNotFoundError:   # v8.1: git binary absent - explain instead of crashing
+        sys.exit("git is not installed or not on PATH - install it (Windows: winget install --id Git.Git -e), reopen the terminal, and rerun from a git clone of your repo.")
 
 def comment(n, text):
     gh("POST", "/repos/" + REPO + "/issues/" + str(n) + "/comments", json={"body": text})
@@ -705,6 +796,128 @@ def amendments():
         return ""
     return "\n\n=== RATIFIED AMENDMENTS (owner-approved standing doctrine - same authority as the laws above) ===\n" + clip(text, 4000)
 
+# ------------------------------------------------- v8: the money meter (economy)
+# Written into every seed workspace as metered.py; agents route ALL model/media calls
+# through it so every rupee lands in spend.jsonl - the ledger STATUS and the money
+# ceiling read. Prices are honest defaults the owner edits to match real billing.
+METERED_SRC = '''# metered.py - VALIDATED: the money meter; every model/media call routes here and logs rupees to spend.jsonl
+import os, json, time
+from google import genai
+_client = None
+def client():
+    # the one lazy real client; prefer generate()/generate_media()/upload() below over raw calls
+    global _client
+    if _client is None:
+        _client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+    return _client
+# rupees per 1M tokens (input, output) - EDIT to match your real billing; unknown models use DEFAULT
+PRICES = {"gemini-3.5-flash": (8.0, 33.0), "gemini-3.5-pro": (105.0, 840.0),
+          "gemini-3.1-pro-preview": (105.0, 840.0), "DEFAULT": (105.0, 840.0)}
+# rupees per generated unit - EDIT to your billing (used by generate_media)
+FLAT = {"image": 3.5, "audio_second": 0.2, "video_second": 4.0}
+def log_spend(kind, model, rupees, note=""):
+    with open("spend.jsonl", "a", encoding="utf-8") as f:
+        f.write(json.dumps({"t": time.time(), "kind": kind, "model": model, "inr": round(float(rupees), 4), "note": str(note)[:120]}) + "\\n")
+def spend_total(path="spend.jsonl"):
+    total = 0.0
+    if os.path.exists(path):
+        for line in open(path, encoding="utf-8", errors="ignore"):
+            try:
+                total += float(json.loads(line).get("inr", 0))
+            except Exception:
+                pass
+    return round(total, 2)
+def generate(model, contents, config=None):
+    # metered text/JSON call: cost computed from real token usage
+    reply = client().models.generate_content(model=model, contents=contents, **({"config": config} if config else {}))
+    u = reply.usage_metadata
+    pin, pout = PRICES.get(model, PRICES["DEFAULT"])
+    if u is not None:
+        prompt_toks = u.prompt_token_count or 0
+        out_toks = max((u.total_token_count or 0) - prompt_toks, 0)
+        cost = (prompt_toks * pin + out_toks * pout) / 1e6
+    else:
+        cost = 0.05
+    log_spend("llm", model, cost)
+    return reply
+def generate_media(kind, units, make, model="?", note=""):
+    # metered media call: state kind ('image'|'audio_second'|'video_second') and units, pass the real call as make()
+    out = make()
+    log_spend(kind, model, FLAT.get(kind, 1.0) * float(units), note)
+    return out
+def upload(file):
+    return client().files.upload(file=file)
+'''
+
+def ledger_total(path):
+    # v8: sum the rupees in one spend.jsonl ledger (0.0 when it does not exist)
+    total = 0.0
+    if os.path.exists(path):
+        for line in open(path, encoding="utf-8", errors="ignore"):
+            try:
+                total += float(json.loads(line).get("inr", 0))
+            except Exception:
+                pass
+    return round(total, 2)
+
+def money_spent():
+    # v8: the running seed's metered spend, read fresh from its workspace ledger
+    return ledger_total(os.path.join(WORKSPACE, "spend.jsonl"))
+
+# ---------------------------------------------- v8.1: one-file bootstrap material
+PROVIDERS_SRC = """# providers.md - the swarm's tool CATALOG: what agents may use, how to call it, what it costs.
+# A row is USABLE only when its "key env var" exists in the environment. Keys live in .env
+# on each worker machine, NEVER in this repo. Agents probe a row with one tiny call before
+# relying on it, and route every call through metered.py so the cost lands in spend.jsonl.
+#
+# To add a provider: subscribe yourself, put the key in .env on every worker machine,
+# restart the workers, then add a row here and push - workers see it on their next pull.
+# Agents may request one via a PROPOSE-PROVIDER comment; only you can subscribe.
+
+| capability | provider / how to call | key env var | unit cost (₹ - EDIT to your billing) | notes |
+|---|---|---|---|---|
+| text, judging, structured JSON | google-genai: metered.generate("gemini-3.5-flash", ...) | GEMINI_API_KEY | ~₹8/M in, ~₹33/M out | default for routine calls |
+| hard planning / judging | metered.generate("gemini-3.5-pro", ...) | GEMINI_API_KEY | ~₹105/M in, ~₹840/M out | escalation only, on proven need |
+| video/audio assembly, resize, mux | ffmpeg (local CLI) | (none - free) | ₹0 | probe with `ffmpeg -version`; install if missing |
+| image generation | (add yours) | | | |
+| text-to-speech | (add yours) | | | |
+| text-to-video | (add yours) | | | |
+"""
+
+LIBRARY_README_SRC = """# library/ - the swarm's compiled wins: ratified playbooks and tools, copied into every seed workspace.
+
+- `playbooks/` - one markdown recipe per task class, harvested from verified wins, with measured costs
+- `tools/` - small self-contained, fault-proven .py utilities promoted from winning workspaces
+- `proposals/` - harvest proposals awaiting the owner; review with: `python swarm.py library`
+- `calibration.md` - the owner's own 0-10 scores of past deliverables (ground truth for judge taste)
+
+Workers propose a harvest after each verified win (hostile-audited first); only the owner
+ratifies. Ratified entries ride into every future seed workspace (minus `proposals/`),
+where doctrine says: search the library first - reuse beats rebuild.
+"""
+
+BENCH_MEDIA_GOAL = """Produce a narrated slideshow video named video.mp4, at least 15 seconds long at 1280x720 or higher: at least 3 visually distinct images shown in sequence with an audible spoken narration of a 2-3 sentence script about how rainbows form, plus script.md containing the exact narration text. Use the cheapest adequate tools reachable (your catalog's free and local tools count) and stay within your money budget - the video must actually decode: duration, distinct frames, and an audible voice track are all verified from the file itself.
+"""
+
+def bootstrap():
+    # v8.1 ONE-FILE SETUP: swarm.py materializes its own companion files when absent,
+    # so deploying the system is copying this single file (plus .env). Idempotent.
+    made = []
+    if not os.path.exists("providers.md"):
+        open("providers.md", "w", encoding="utf-8").write(PROVIDERS_SRC)
+        made.append("providers.md")
+    if not os.path.exists(os.path.join("library", "README.md")):
+        os.makedirs("library", exist_ok=True)
+        open(os.path.join("library", "README.md"), "w", encoding="utf-8").write(LIBRARY_README_SRC)
+        made.append("library/README.md")
+    bdir = os.environ.get("BENCHMARK_DIR", "benchmark")
+    goal4 = os.path.join(bdir, "goal-4-media-slideshow.txt")
+    if os.path.isdir(bdir) and not os.path.exists(goal4):
+        open(goal4, "w", encoding="utf-8").write(BENCH_MEDIA_GOAL)
+        made.append(goal4.replace(os.sep, "/"))
+    if made != []:
+        print("bootstrap: created " + ", ".join(made))
+
 # ---------------------------------------------------- the agent's view each turn
 def build_prompt(goal, turn, stalls, rejections, model):
     # the guaranteed skeleton: no agent bug can remove the goal, the last rejection,
@@ -715,7 +928,7 @@ def build_prompt(goal, turn, stalls, rejections, model):
     sections.append("===== FILE INDEX (name -> first line) =====\n" + clip(file_index(), 2500))
     sections.append("===== YOUR NOTES (notes.md - your plan, node tree, facts) =====\n" + clip(read_file("notes.md"), 6000))
     sections.append("===== RECENT HISTORY (verbatim tail of memory.md) =====\n" + clip(read_file("memory.md"), 7000, True))
-    sections.append(f"===== STATUS =====\nturn {turn}/{MAX_TURNS} | stalls in a row: {stalls} | gate rejections: {rejections}/{MAX_REJECTIONS} | model: {model} | tokens: {tokens_used}/{TOKEN_BUDGET}")
+    sections.append(f"===== STATUS =====\nturn {turn}/{MAX_TURNS} | stalls in a row: {stalls} | gate rejections: {rejections}/{MAX_REJECTIONS} | model: {model} | tokens: {tokens_used}/{TOKEN_BUDGET} | money: ₹{money_spent()}/₹{MONEY_BUDGET:g}")
     return "\n\n".join(sections)
 
 # ------------------------------------------------------------------- the gate
@@ -749,6 +962,11 @@ def gate():
 # --------------------------------------------------------------- the seed loop
 def run_seed(goal):
     save_file("goal.md", goal + "\n", "w")
+    save_file("metered.py", METERED_SRC, "w")   # v8: the money meter rides in every workspace
+    if os.path.exists("providers.md") and not os.path.exists(os.path.join(WORKSPACE, "providers.md")):
+        shutil.copy("providers.md", os.path.join(WORKSPACE, "providers.md"))   # v8: the catalog
+    if os.path.isdir("library"):   # v8: ratified playbooks/tools from past wins (never raw proposals)
+        shutil.copytree("library", os.path.join(WORKSPACE, "library"), ignore=shutil.ignore_patterns("proposals"), dirs_exist_ok=True)
     subprocess.run(["git", "init"], cwd=WORKSPACE, capture_output=True)
     log("Seed born", "goal: " + goal[:300])
     stalls, rejections = 0, 0
@@ -756,6 +974,10 @@ def run_seed(goal):
         # CEILING 1: the wallet - checked in code before every single model call
         if tokens_used >= TOKEN_BUDGET:
             print("Stopping: the token budget is used up.")
+            return
+        # v8 CEILING 2: the wallet in rupees - metered agent spend from spend.jsonl
+        if money_spent() >= MONEY_BUDGET:
+            print("Stopping: the money budget is used up (₹" + str(money_spent()) + " of ₹" + str(MONEY_BUDGET) + ").")
             return
         # VITAMIN: strong brain for turn 1 (goal compilation), stalls, and repairs
         model = SMART_MODEL if (turn == 1 or turn % 5 == 0 or stalls >= 2 or read_file(".gate_rejection").strip() != "") else FAST_MODEL
@@ -941,6 +1163,11 @@ def do_task(it):
         if os.path.exists(p):
             os.makedirs(os.path.dirname(os.path.join(work, "workspace", p)) or work, exist_ok=True)
             shutil.copy(p, os.path.join(work, "workspace", p))
+    # v8: the catalog and the ratified library ride into every seed workspace
+    if os.path.exists("providers.md"):
+        shutil.copy("providers.md", os.path.join(work, "workspace", "providers.md"))
+    if os.path.isdir("library"):
+        shutil.copytree("library", os.path.join(work, "workspace", "library"), ignore=shutil.ignore_patterns("proposals"), dirs_exist_ok=True)
     goal = it["title"] + "\n\n" + re.sub(r"^(depends_on|artifacts_needed):.*$", "", body, flags=re.M).strip()
     if artifacts_needed(body):
         goal += "\n\nAlready provided in your working directory: " + ", ".join(artifacts_needed(body))
@@ -952,7 +1179,10 @@ def do_task(it):
         " starting exactly 'QUESTION: ', then continue on the reversible path without waiting. If a PROVIDED input"
         " artifact fails your validation (placeholder, degenerate, or broken contract), post ONE comment starting"
         " exactly 'INPUT-REJECT: #<producing issue number> ' plus one line of evidence - the swarm will reopen that"
-        " task; then declare impossible honestly instead of building on garbage. Never create issues yourself; an"
+        " task; then declare impossible honestly instead of building on garbage. If providers.md lacks an adequate"
+        " tool for a capability this task needs, you may post ONE comment starting exactly 'PROPOSE-PROVIDER: '"
+        " (capability, best candidate service, pricing, what it unlocks) - the owner decides about subscribing;"
+        " continue meanwhile on the best reachable tier. Never create issues yourself; an"
         " owner-side arbiter reviews and answers as an 'ARBITER re' comment on this issue.")
     # v6/V6-3 FEEDBACK INJECTION: a retry must know why the last attempt failed
     lastfail = [c for c in cs if c["body"].startswith("VERIFY: FAIL")]
@@ -1034,6 +1264,10 @@ def do_verify(it):
     if good:
         gh("PATCH", "/repos/" + REPO + "/issues/" + str(n), json={"state": "closed"})
         print("issue #" + str(n) + " verified and closed")
+        try:
+            harvest(it, spot)   # v8: compile the win - best-effort, never blocks verification
+        except Exception as error:
+            print("harvest skipped: " + repr(error))
     else:
         # free the task so it can be retried fresh (find_task caps how many times)
         fresh = gh("GET", "/repos/" + REPO + "/issues/" + str(n))
@@ -1042,9 +1276,69 @@ def do_verify(it):
                json={"assignees": [a["login"] for a in fresh["assignees"]]})
         print("issue #" + str(n) + " failed verification - unassigned for a retry")
 
+# ---------------------------------------------------------- v8: compiling wins
+def harvest(it, spot):
+    # COMPILE THE WIN: after a verified pass, a FRESH mind distills the reusable residue
+    # (a general playbook + optionally one small proven tool), a hostile audit filters
+    # it, and the proposal is parked in library/proposals/ for the owner to ratify with
+    # `python swarm.py library`. Best-effort: a failed harvest never blocks verification.
+    n = it["number"]
+    def rd(name, cap):
+        p = os.path.join(spot, name)
+        return clip(open(p, encoding="utf-8", errors="ignore").read(), cap) if os.path.exists(p) else ""
+    index = "\n".join(sorted(os.path.relpath(os.path.join(folder, f), spot) for folder, ignored, fs in os.walk(spot) for f in fs))
+    tools_txt = ""
+    tdir = os.path.join(spot, "tools")
+    if os.path.isdir(tdir):
+        for f in sorted(os.listdir(tdir))[:3]:
+            if f.endswith(".py"):
+                tools_txt += "\n\n--- tools/" + f + " ---\n" + clip(open(os.path.join(tdir, f), encoding="utf-8", errors="ignore").read(), 3000)
+    evidence = ("FILE INDEX:\n" + clip(index, 1500) + "\n\n--- notes.md ---\n" + rd("notes.md", 5000)
+                + "\n\n--- criteria.md ---\n" + rd("criteria.md", 3000)
+                + "\n\n--- spend.jsonl tail ---\n" + clip(rd("spend.jsonl", 100000), 1200, True) + tools_txt)
+    task = clip(it["title"] + "\n" + (it.get("body") or ""), 2500)
+    p = json.loads(call_llm(HARVEST_PROMPT.replace("{task}", task).replace("{evidence}", evidence), SMART_MODEL, HARVEST_SCHEMA))
+    if p["decision"] != "propose":
+        print("harvest: nothing general to keep from issue #" + str(n))
+        return
+    audit = json.loads(call_llm(HARVEST_AUDIT.replace("{proposal}", clip(p["title"] + "\n" + p["playbook"]
+        + ("\n\nTOOL " + p["tool_name"] + ":\n" + p["tool_code"] if p["tool_name"].strip() else ""), 9000)), SMART_MODEL, JUDGE_SCHEMA))
+    if audit["verdict"] != "APPROVE":
+        print("harvest rejected by its audit: " + audit["problems"][:200])
+        return
+    slug = re.sub(r"[^a-z0-9]+", "-", p["title"].lower()).strip("-")[:40] or "win"
+    dest = os.path.join("library", "proposals", "issue-" + str(n) + "-" + slug)
+    os.makedirs(dest, exist_ok=True)
+    with open(os.path.join(dest, "playbook.md"), "w", encoding="utf-8") as f:
+        f.write("# " + p["title"].strip() + " (harvested from issue #" + str(n) + ", "
+                + datetime.now(timezone.utc).strftime("%Y-%m-%d") + ")\n\n" + p["playbook"].strip()
+                + ("\n\nfacts: " + p["facts"].strip() if p["facts"].strip() else "") + "\n")
+    if p["tool_name"].strip() and p["tool_code"].strip():
+        with open(os.path.join(dest, os.path.basename(p["tool_name"].strip())), "w", encoding="utf-8") as f:
+            f.write(p["tool_code"])
+    pushed = False
+    for attempt in range(3):
+        git("pull", "--rebase")
+        git("add", "library")
+        git("commit", "-m", "harvest proposal from issue #" + str(n))
+        if git("push").returncode == 0:
+            pushed = True
+            break
+    if pushed:
+        comment(n, "HARVEST from " + who_am_i() + "\nproposed " + dest.replace(os.sep, "/")
+                + "/ - ratify it into the standing library with: python swarm.py library")
+        print("harvest proposed: " + dest)
+    else:
+        git("reset", "--hard", "@{u}")
+        print("harvest push failed - proposal dropped")
+
 # ------------------------------------------------------------ the worker main
 def worker_main():
     bind_repo(need_me=True)
+    # v8.1 PREFLIGHT: publishing rides on git push, so this folder must be a real clone
+    if git("rev-parse", "--is-inside-work-tree").returncode != 0:
+        sys.exit("this folder is not a git clone (a ZIP download cannot push artifacts) - run:\n"
+                 "  git clone https://github.com/" + REPO + ".git\nthen run the worker inside that folder.")
     # make git pushes just work: point origin at the repo using this worker's token
     git("remote", "set-url", "origin", "https://x-access-token:" + os.environ["GITHUB_TOKEN"] + "@github.com/" + REPO + ".git")
     print("worker up: " + who_am_i() + " on " + REPO + " - ctrl-c to stop")
@@ -1128,7 +1422,7 @@ def arbiter(goal):
                 cs = comments_of(it["number"])
                 answered = {c["body"].split()[2].rstrip(":") for c in cs if c["body"].startswith("ARBITER re ")}
                 for c in cs:
-                    if not c["body"].startswith(("PROPOSE-TASK:", "QUESTION:")) or str(c["id"]) in answered:
+                    if not c["body"].startswith(("PROPOSE-TASK:", "QUESTION:", "PROPOSE-PROVIDER:")) or str(c["id"]) in answered:
                         continue
                     if c["body"].startswith("PROPOSE-TASK:") and "spawned-by: arbiter" in (it.get("body") or ""):
                         verdict = {"decision": "reject", "title": "", "body": "", "reply": "depth limit: a task created at runtime may not propose further tasks"}
@@ -1151,6 +1445,8 @@ def arbiter(goal):
                         outcome = verdict["reply"][:400]
                     comment(it["number"], "ARBITER re " + str(c["id"]) + ": " + verdict["decision"].upper() + " - " + outcome)
                     print("arbiter: issue #" + str(it["number"]) + " comment " + str(c["id"]) + " -> " + verdict["decision"])
+                    if c["body"].startswith("PROPOSE-PROVIDER:"):   # v8: surface it loudly for the owner
+                        print("  PROVIDER REQUEST queued for you (issue #" + str(it["number"]) + "): " + c["body"][:200].replace("\n", " "))
         except Exception as error:
             print("arbiter error (will retry): " + repr(error))
         time.sleep(60)
@@ -1194,7 +1490,8 @@ def status_main():
         state, detail = classify(it, open_numbers)
         counts[state] = counts.get(state, 0) + 1
         extra = ("  [" + detail + "]") if detail != "" else ""
-        print("  #" + str(it["number"]).ljust(4) + state.upper().ljust(24) + it["title"][:55] + extra)
+        spent = ledger_total(os.path.join("artifacts", "issue-" + str(it["number"]), "spend.jsonl"))   # v8
+        print("  #" + str(it["number"]).ljust(4) + state.upper().ljust(24) + it["title"][:55] + extra + (("  ₹" + str(spent)) if spent > 0 else ""))
     print("\n  " + " | ".join(k + ": " + str(v) for k, v in sorted(counts.items())) + "\n")
 
 # ================================================== v7 AMEND + BENCHMARK
@@ -1206,6 +1503,9 @@ def failure_evidence():
         for c in comments_of(it["number"]):
             if c["body"].startswith(("VERIFY: FAIL", "PUBLISH-FAILED", "INPUT-REJECT:")):
                 out.append("issue #" + str(it["number"]) + " (" + it["title"][:60] + "):\n" + c["body"][:800])
+            m = re.match(r"OWNER-SCORE:\s*(\d+(?:\.\d+)?)\s*/\s*10", c["body"])   # v8: low owner taste scores are failures too
+            if m and float(m.group(1)) < 7 and c["user"]["login"] == OWNER:
+                out.append("issue #" + str(it["number"]) + " (" + it["title"][:60] + "): the owner scored the ACCEPTED deliverable only " + m.group(1) + "/10:\n" + c["body"][:400])
     return out
 
 def run_benchmark(amend_text):
@@ -1217,16 +1517,21 @@ def run_benchmark(amend_text):
     names = sorted(f for f in (os.listdir(bdir) if os.path.isdir(bdir) else []) if f.endswith(".txt"))
     if names == []:
         print("  no goals found - put one goal per .txt file in " + bdir + "/")
-        return (0, 0)
+        return (0, 0, 0.0)
     env = {**os.environ, "SWARM_AMENDMENTS": amend_text,
            "TOKEN_BUDGET": os.environ.get("BENCH_TOKEN_BUDGET", "300000"),
-           "MAX_TURNS": os.environ.get("BENCH_MAX_TURNS", "25")}
-    passes = 0
+           "MAX_TURNS": os.environ.get("BENCH_MAX_TURNS", "25"),
+           "MONEY_BUDGET": os.environ.get("BENCH_MONEY_BUDGET", "75")}   # v8: ₹ cap per bench run
+    passes, cost = 0, 0.0
     for name in names:
         goal = open(os.path.join(bdir, name), encoding="utf-8", errors="ignore").read().strip()
         work = os.path.abspath(os.path.join("..", "swarm-bench", name[:-4]))
         rmtree(work)   # benchmark runs are always fresh - a resume would blur the measurement
         os.makedirs(os.path.join(work, "workspace"))
+        if os.path.exists("providers.md"):   # v8: bench seeds see the same catalog and library
+            shutil.copy("providers.md", os.path.join(work, "workspace", "providers.md"))
+        if os.path.isdir("library"):
+            shutil.copytree("library", os.path.join(work, "workspace", "library"), ignore=shutil.ignore_patterns("proposals"), dirs_exist_ok=True)
         try:
             r = subprocess.run([sys.executable, os.path.abspath(__file__), "seed", goal], cwd=work,
                 capture_output=True, text=True, env=env, timeout=int(os.environ.get("BENCH_TIMEOUT_SECONDS", "1800")))
@@ -1234,8 +1539,10 @@ def run_benchmark(amend_text):
         except subprocess.TimeoutExpired:
             ok = False
         passes += 1 if ok else 0
-        print("  " + name + ": " + ("PASS" if ok else "FAIL"))
-    return (passes, len(names))
+        spent = ledger_total(os.path.join(work, "workspace", "spend.jsonl"))   # v8
+        cost += spent
+        print("  " + name + ": " + ("PASS" if ok else "FAIL") + " (₹" + str(spent) + ")")
+    return (passes, len(names), round(cost, 2))
 
 def benchmark_main():
     if os.environ.get("ENABLE_BENCHMARK") != "1":
@@ -1244,7 +1551,7 @@ def benchmark_main():
         return
     current = open("amendments.md", encoding="utf-8", errors="ignore").read() if os.path.exists("amendments.md") else ""
     s = run_benchmark(current)
-    print("score: " + str(s[0]) + "/" + str(s[1]))
+    print("score: " + str(s[0]) + "/" + str(s[1]) + " at ₹" + str(s[2]))
 
 def amend_main():
     # v7 SELF-AMENDING PHILOSOPHY - the whole pipeline, gate-safe by construction:
@@ -1281,11 +1588,12 @@ def amend_main():
         base = run_benchmark(current)
         print("benchmark WITH the amendment:")
         cand = run_benchmark(current + entry)
-        improved = cand[0] > base[0]
-        print("score: " + str(base[0]) + "/" + str(base[1]) + "  ->  " + str(cand[0]) + "/" + str(cand[1]))
+        # v8 QUALITY-PER-RUPEE: better = more passes, or equal passes at >=20% lower cost
+        improved = cand[0] > base[0] or (cand[0] == base[0] and base[2] > 0 and cand[2] <= base[2] * 0.8)
+        print("score: " + str(base[0]) + "/" + str(base[1]) + " at ₹" + str(base[2]) + "  ->  " + str(cand[0]) + "/" + str(cand[1]) + " at ₹" + str(cand[2]))
     if os.environ.get("AMEND_AUTO") == "1":
         if improved is False:
-            print("AMEND_AUTO: NOT ratified - the benchmark score did not strictly improve")
+            print("AMEND_AUTO: NOT ratified - need more passes, or equal passes at >=20% lower cost")
             return
         print("AMEND_AUTO: ratifying" + (" - the benchmark improved" if improved else " (benchmark off - audit approval alone)"))
     elif input("\nRatify this amendment? (yes/no) ").strip().lower() not in ("y", "yes"):
@@ -1304,6 +1612,60 @@ def amend_main():
             break
     print("ratified and pushed - workers adopt it on their next pull" if pushed else "ratified locally but the push failed - push manually")
 
+# ============================================================ v8 THE LIBRARY (owner)
+def library_main():
+    # Owner-side, the ratification seat for compiled wins: refresh taste calibration
+    # from OWNER-SCORE comments, then review harvest proposals into the standing
+    # library. Ratified entries ride into every future seed workspace on the next pull.
+    bind_repo()
+    issues = [it for it in gh("GET", "/repos/" + REPO + "/issues", params={"state": "all", "creator": OWNER, "per_page": 100}) if "pull_request" not in it]
+    rows = []
+    for it in sorted(issues, key=lambda x: x["number"]):
+        for c in comments_of(it["number"]):
+            m = re.match(r"OWNER-SCORE:\s*(\d+(?:\.\d+)?)\s*/\s*10\s*(.*)", c["body"], re.S)
+            if m and c["user"]["login"] == OWNER:
+                rows.append("issue #" + str(it["number"]) + " | " + it["title"][:60] + " | " + m.group(1) + "/10 | " + m.group(2).strip().replace("\n", " ")[:200])
+    os.makedirs("library", exist_ok=True)
+    if rows != []:
+        with open(os.path.join("library", "calibration.md"), "w", encoding="utf-8") as f:
+            f.write("# calibration.md - the owner's own scores of past deliverables: ground truth for judge taste.\n\n" + "\n".join(rows) + "\n")
+        print("calibration.md refreshed: " + str(len(rows)) + " owner scores")
+    else:
+        print("no OWNER-SCORE comments on the board yet (comment 'OWNER-SCORE: 6/10 <note>' on any issue)")
+    pdir = os.path.join("library", "proposals")
+    names = sorted(os.listdir(pdir)) if os.path.isdir(pdir) else []
+    if names == []:
+        print("no harvest proposals waiting")
+    for name in names:
+        pb = os.path.join(pdir, name, "playbook.md")
+        head = clip(open(pb, encoding="utf-8", errors="ignore").read(), 1200) if os.path.exists(pb) else "(no playbook.md)"
+        print("\n--- proposal: " + name + " ---\n" + head)
+        keep = input("Ratify into the library? (yes/no/skip) ").strip().lower()
+        if keep in ("y", "yes"):
+            slug = re.sub(r"^issue-\d+-", "", name)
+            os.makedirs(os.path.join("library", "playbooks"), exist_ok=True)
+            if os.path.exists(pb):
+                shutil.move(pb, os.path.join("library", "playbooks", slug + ".md"))
+            for f in (os.listdir(os.path.join(pdir, name)) if os.path.isdir(os.path.join(pdir, name)) else []):
+                os.makedirs(os.path.join("library", "tools"), exist_ok=True)
+                shutil.move(os.path.join(pdir, name, f), os.path.join("library", "tools", f))
+            rmtree(os.path.join(pdir, name))
+            print("ratified: library/playbooks/" + slug + ".md")
+        elif keep in ("n", "no"):
+            rmtree(os.path.join(pdir, name))
+            print("discarded")
+        else:
+            print("left for later")
+    git("remote", "set-url", "origin", "https://x-access-token:" + os.environ["GITHUB_TOKEN"] + "@github.com/" + REPO + ".git")
+    git("add", "library")
+    git("commit", "-m", "library: ratifications + calibration refresh")
+    for attempt in range(3):
+        git("pull", "--rebase")
+        if git("push").returncode == 0:
+            print("library pushed - workers adopt it on their next pull")
+            return
+    print("push failed - push library/ manually")
+
 # ================================================================== DISPATCH
 USAGE = """swarm.py - the whole agent swarm in one file. Subcommands:
   python swarm.py seed "<goal>"     run the single-task agent here (resumes: memory + git persist)
@@ -1312,11 +1674,16 @@ USAGE = """swarm.py - the whole agent swarm in one file. Subcommands:
   python swarm.py arbiter "<goal>"  owner-side: review PROPOSE-TASK / QUESTION comments
   python swarm.py status            read-only dashboard
   python swarm.py amend             propose ONE philosophy amendment from board failures
-  python swarm.py benchmark         score the system on benchmark/ goals (ENABLE_BENCHMARK=1)"""
+  python swarm.py benchmark         score the system on benchmark/ goals (ENABLE_BENCHMARK=1)
+  python swarm.py library           owner-side: ratify harvest proposals, refresh taste calibration"""
 
 if __name__ == "__main__":
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
     rest = " ".join(sys.argv[2:]).strip()
+    if cmd in ("seed", "worker", "benchmark", "amend", "library") and shutil.which("git") is None:
+        sys.exit("git is required for '" + cmd + "' - install it (Windows: winget install --id Git.Git -e), then close and reopen the terminal and rerun.")
+    if cmd in ("seed", "worker", "owner", "arbiter", "status", "amend", "benchmark", "library"):
+        bootstrap()   # v8.1: one file is all you deploy - companions are materialized here
     if cmd == "seed":
         goal = rest or input("What should the agent achieve? ")
         os.makedirs(WORKSPACE, exist_ok=True)
@@ -1333,5 +1700,7 @@ if __name__ == "__main__":
         amend_main()
     elif cmd == "benchmark":
         benchmark_main()
+    elif cmd == "library":
+        library_main()
     else:
         print(USAGE)
