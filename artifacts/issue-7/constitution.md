@@ -1,34 +1,37 @@
-# constitution.md
+# Constitution for Animated Comedy Video (IG Reels)
 
-## Interpretation
-The goal is to produce a narrated animated comedy video under 2 minutes in length for Instagram Reels (9:16 aspect ratio, 1080x1920). Humor style: original characters, edgy/satirical like Family Guy or South Park. The production requires a strict evaluation framework to ensure quality, pacing, and visual consistency suitable for modern social media consumption.
+## 1. Strategy
+- **Platform**: Instagram Reels (9:16 aspect ratio, 1080x1920)
+- **Length**: Under 2 minutes
+- **Humor Style**: Original characters, edgy/satirical like Family Guy or South Park.
+- **Pacing**: Fast setup, rapid punchlines, visual gags, keeping audience retention high.
+- **Core Loop**: Setup -> Escalation -> Shock/Punchline -> Cut to black or loop.
 
-## Strategy & Visual Style
-- **Platform**: Instagram Reels (Vertical 9:16, 1080x1920).
-- **Pacing**: Rapid-fire setups and punchlines, akin to South Park or Family Guy. The first 3 seconds must contain a strong hook or controversial premise to stop the scroll.
-- **Visuals**: Flat 2D vector animation style, bold outlines, vibrant colors. Characters should have distinct, exaggerated features to be easily readable on small screens.
-- **Audio**: Crisp, closely mic'd voiceovers. Background music should be minimal unless used for comedic effect. Sound effects should be snappy.
+## 2. Visual Style Decisions
+- **Character Design**: Thick outlines, flat colors (South Park style), rigid but expressive features.
+- **Backgrounds**: Simple, non-distracting, allowing characters to pop.
+- **Animation**: Cut-out animation style, limited frames to emphasize comedic timing (pose-to-pose).
+- **Consistency**: High visual consistency across scenes to build brand identity.
 
-## Grading Rubrics (0-10)
+## 3. Rubrics (0-10)
+**Pass Threshold for all dimensions: 8.0**
 
-The overarching numeric pass threshold for any artifact is **8.0**.
+### Script (Pacing and Humor)
+- **4 (Bad)**: Generic jokes, pacing is too slow for IG Reels, fails to set up a premise within 3 seconds.
+- **7 (Pass)**: Contains a clear joke, decent pacing, aligns somewhat with the edgy/satirical tone.
+- **9 (Excellent)**: Punchy, instantly hooks the viewer, brilliant satirical edge matching prime South Park, zero dead air.
 
-### 1. Script Rubric
-- **4=** Bad: Predictable, slow pacing, lacks edgy or satirical bite, hook fails to engage in the first 3 seconds.
-- **7=** Pass: Competent structure, decent satirical premise, pacing is acceptable but could be tighter, jokes land mostly.
-- **9=** Excellent: Hilarious, punchy setups, razor-sharp satire akin to classic Family Guy, perfect timing, deeply engaging hook.
+### Audio (Crispness and Acting)
+- **4 (Bad)**: Muffled voices, missing sound effects, robotic AI delivery.
+- **7 (Pass)**: Clear dialogue, adequate volume balancing, fits the tone.
+- **9 (Excellent)**: Studio-quality crispness, hilarious and expressive character voice acting, perfectly timed SFX.
 
-### 2. Audio Rubric
-- **4=** Bad: Muffled or echoing voices, unbalanced mixing, sound effects are missing or poorly timed.
-- **7=** Pass: Clear voiceover, balanced mix, adequate sound effects, meets basic professional standards.
-- **9=** Excellent: Studio-quality crispness, distinct and expressive voice acting, flawless comedic timing via sound effects.
+### Visuals (Consistency and Composition)
+- **4 (Bad)**: Stale compositions, mismatched art styles, confusing character designs.
+- **7 (Pass)**: 1080x1920 respected, clear action, characters look cohesive.
+- **9 (Excellent)**: Distinctive cut-out style, perfect visual gags, instantly recognizable and highly engaging layout.
 
-### 3. Visuals Rubric
-- **4=** Bad: Inconsistent character designs, poor framing for 9:16, messy backgrounds, muddy colors.
-- **7=** Pass: Consistent 2D vector style, readable on mobile, fits the 9:16 frame well, visually acceptable.
-- **9=** Excellent: Striking, iconic character designs, perfect framing that guides the eye, dynamic expressions that elevate the comedy.
-
-### 4. Final Assembly Rubric
-- **4=** Bad: Desynced audio/video, jarring cuts, pacing is completely off, fails to render correctly in 1080x1920.
-- **7=** Pass: Audio and visuals are synced properly, cuts are logical, meets technical specs, coherent narrative.
-- **9=** Excellent: Flawless sync, editing enhances the comedic timing significantly, highly polished final render that looks and feels like a top-tier Reel.
+### Final Assembly (Timing and Cohesion)
+- **4 (Bad)**: Disjointed scenes, awkward pauses between audio and visual action.
+- **7 (Pass)**: Video flows logically, audio syncs well with mouths/actions.
+- **9 (Excellent)**: Masterful comedic timing, audio/visual punchlines hit exactly on frame, extremely re-watchable.

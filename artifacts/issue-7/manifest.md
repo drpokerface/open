@@ -1,2 +1,3 @@
-manifest.md (text/markdown)
-constitution.md (text/markdown)
+# Manifest
+- manifest.md
+- constitution.md (Strategy and Rubric)
