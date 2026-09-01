@@ -34,7 +34,7 @@ def generate(model, contents, config=None):
     if model in ALIASES:   # v8.3: reroute a dead model name (announced once per process)
         if model not in _aliased:
             _aliased.add(model)
-            # print("metered: " + model + " is not on this key - routed to " + ALIASES[model])
+            print("metered: " + model + " is not on this key - routed to " + ALIASES[model])
         model = ALIASES[model]
     reply = client().models.generate_content(model=model, contents=contents, **({"config": config} if config else {}))
     u = reply.usage_metadata

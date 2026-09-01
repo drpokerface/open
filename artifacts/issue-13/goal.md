@@ -8,10 +8,4 @@ SWARM CHANNEL: you are working issue #13 of the GitHub repo drpokerface/open (to
 
 LAST VERIFICATION FAILURE (repair this first):
 VERIFY: FAIL by worker-1 (drpokerface)
-
---- verify.py output tail ---
-```
-irect use of automatic function calling (AFC) in Models.generate_content is not recommended. Instead, we recommend to use AFC in Chat.send_message. Similarly, direct use of AFC in Models.generate_content_stream is not recommended. Instead, we recommend to use AFC in Chat.send_message_stream.
-
-
-a hostile audit rejected the claim at peer verification: The verifier fails on multiple strict audit rules for subjective criteria. 1) No logged justification: The LLM judge in `judge_constitution` uses a JSON schema that requests a raw numeric score and booleans without any chain-of-thought or `reasoning` field. It logs a naked score with no justification, making it unauditable. 2) No cited anchor: The judge is instructed to 'Score the overall quality... from 0 to 10' but is provided no anchors or baseline to ground what a 10 (or a 4, 7, 9) means for the constitution artifact itself. 3) Hallucinated model: The script calls `gemini-3.5-flash`, a model version that does not exist. 4) Fragile checks: The placeholder check in `check_file_content` searches for `[` as a substring, meaning it will unconditionally fail any per
+its own RESULT reports the gate was not passed - sent back for retry, not closed.

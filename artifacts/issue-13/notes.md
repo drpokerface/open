@@ -1,19 +1,28 @@
-# Plan
-1. Define criteria.md [verified]
-2. Write verify.py and run it red. [verified]
-3. Research exemplars and draft constitution.md and manifest.md. [verified] (Turn 5)
-4. Refine against verify.py if needed.
-5. Done.
+# notes.md - working mind
 
-# Node Tree
-- Root: Goal Constitution & Humor Rubric
-  - C1: constitution.md exists [verified]
-  - C2: manifest.md exists [verified]
-  - C3: Strategy, Style, Conventions [verified]
-  - C4: Rubric 4, 7, 9 anchors for Comedy, Animation, Audio [verified]
-  - C5: 8/10 pass threshold [verified]
-  - C6: Exemplars cited [verified]
-  - C7: Subjective quality >= 8 [verified]
+## Plan
+1. Establish criteria and verification (RED verify.py).
+2. Distill real Instagram animated comedy exemplars as anchors using model.
+3. Draft constitution.md with Strategy, Style, Conventions, Rubrics (4,7,9), 8/10 threshold, 3 anchors.
+4. Draft manifest.md.
+5. Run subjective judging loops to refine constitution.md.
+6. verify.py PASS and done.
 
-# Facts
-F1 | verify.py requires specific keywords and a subjective model score >= 8 | evidence: Turn 4
+## Node Tree
+- C1: constitution.md exists, size >= 1000 bytes -> [assumed]
+- C2: manifest.md exists -> [assumed]
+- C3: constitution.md contains Strategy, Style, Conventions -> [assumed]
+- C4: constitution.md contains Comedy, Animation, Audio rubrics with 4, 7, 9 descriptors -> [assumed]
+- C5: constitution.md sets 8/10 threshold -> [assumed]
+- C6: constitution.md cites >= 3 real exemplars -> [assumed]
+- C7: No placeholders -> [assumed]
+- C8: Perceptual quality score >= 8/10 -> [assumed]
+
+## Degenerate Twins
+- D1: Blank/empty/short file under 1000 bytes.
+- D2: Placeholders like "TODO" or "Lorem Ipsum".
+- D3: Missing explicit anchors for 4, 7, 9.
+- D4: Missing specific sections (Strategy, Style).
+
+## Facts
+F1 | Instagram scraping is blocked; will use strong model knowledge to recall exemplars | [verified] turn 1
