@@ -77,7 +77,7 @@ def check_constitution_perception(const_path):
             "--- CONSTITUTION TEXT ---\n" + content[:5000]
         )
         try:
-            response_c5 = generate("gemini-3.1-pro-preview", prompt_c5, config={"response_mime_type": "application/json"})
+            response_c5 = generate("gemini-3.5-pro", prompt_c5, config={"response_mime_type": "application/json"})
             data_c5 = json.loads(response_c5.text)
             scores.append(float(data_c5.get("score", 0)))
         except Exception as e:
@@ -126,3 +126,5 @@ if __name__ == '__main__':
         
     print("VERDICT: PASS")
     sys.exit(0)
+
+    print("VERDICT: PASS")
