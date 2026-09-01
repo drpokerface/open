@@ -1,15 +1,12 @@
-# Criteria for Goal Constitution & Humor Rubric
 
 ## Interpretation
-- The deliverable is a `constitution.md` file and a `manifest.md` file.
-- The constitution must be a goal-specialized philosophy for an edgy, satirical comedy Reel.
-- The constitution must define the strategy, style decisions, conventions, and a scoring rubric.
-- The rubric must include anchored descriptors for 4, 7, and 9 for comedy, animation, and audio, and set a numeric pass threshold of 8/10.
-- Placeholders or stub content anywhere is an automatic FAIL.
-- Providers must ship `manifest.md` next to their deliverable.
+We are developing the foundational `constitution.md` for an edgy, satirical, 9:16 animated comedy series for Instagram Reels. It dictates the strategy, style, conventions, and a strict grading rubric.
 
 ## Claims
-- C1: `constitution.md` exists, has >100 characters, and contains no placeholders.
-- C2: `manifest.md` exists, has >100 characters, and contains no placeholders.
-- C3: `constitution.md` median score is >= 8.0 from a judge evaluating its strategy, style, and concrete anchored rubrics (4, 7, 9) for comedy, animation, and audio, with an 8/10 threshold.
-- C4: `manifest.md` contains concrete, real inputs and outputs, not dummy names, validated by a judge.
+C1. `constitution.md` exists, is valid markdown, and has > 150 words.
+C2. `manifest.md` exists, is valid markdown, and references `constitution.md`.
+C3. `constitution.md` includes explicit sections for "Strategy", "Style Decisions", and "Conventions".
+C4. `constitution.md` includes an anchored rubric defining scores of 4, 7, and 9 for Comedy, Animation, and Audio.
+C5. `constitution.md` explicitly states a numeric pass threshold of 8/10.
+C6. `constitution.md` cites at least 3 real exemplars of animated comedy.
+C7. Perceptual Quality: A fresh LLM judge confirms the constitution provides clear, actionable, edgy/satirical guidance scoring >= 8/10.

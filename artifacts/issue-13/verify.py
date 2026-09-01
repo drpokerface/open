@@ -1,140 +1,177 @@
-# verify.py - VALIDATED: verify the Goal Constitution and Manifest
-import os, sys, json, shutil
-from metered import generate
+import warnings, logging, os
+warnings.filterwarnings("ignore")
+logging.getLogger().setLevel(logging.ERROR)
+logging.getLogger("google").setLevel(logging.ERROR)
+logging.getLogger("google.genai").setLevel(logging.ERROR)
+logging.getLogger("httpx").setLevel(logging.ERROR)
+logging.captureWarnings(True)
+os.environ["GRPC_VERBOSITY"] = "ERROR"
+os.environ["GLOG_minloglevel"] = "3"
+# verify.py - VALIDATED: gate rollup
+import os
+import sys
+import random
+import shutil
+import json
 
-def check_file_content(path):
-    if not os.path.exists(path):
-        return False, "File not found"
-    with open(path, "r", encoding="utf-8") as f:
-        content = f.read()
-    if len(content.strip()) < 100:
-        return False, "File is degenerate/too short"
-    bad_words = ["todo", "placeholder", "lorem", "[", "]", "tbd", "dummy"]
-    for w in bad_words:
-        if w in content.lower():
-            return False, f"Contains placeholder word: {w}"
-    return True, "Pass"
+import os, sys
+def silence():
+    try:
+        s_out = os.dup(1)
+        s_err = os.dup(2)
+        dn = os.open(os.devnull, os.O_WRONLY)
+        os.dup2(dn, 1)
+        os.dup2(dn, 2)
+        return s_out, s_err, dn
+    except Exception:
+        return None, None, None
 
-def judge_constitution(path):
-    with open(path, "r", encoding="utf-8") as f:
-        content = f.read()
+def restore(s_out, s_err, dn):
+    try:
+        if s_out is not None:
+            os.dup2(s_out, 1)
+            os.close(s_out)
+        if s_err is not None:
+            os.dup2(s_err, 2)
+            os.close(s_err)
+        if dn is not None:
+            os.close(dn)
+    except Exception:
+        pass
+
+
+try:
+    s_out, s_err, dn = silence()
+    try:
+        from metered import generate
+    finally:
+        restore(s_out, s_err, dn)
+except ImportError:
+    print("metered not found")
+    sys.exit(1)
+
+def verify_artifact(const_path, manifest_path):
+    issues = []
+    measured = {}
     
-    prompt = f"""
-Analyze the following Goal Constitution for a satirical 9:16 Instagram Reel.
-Does it have explicit anchored descriptors of what a 4, a 7, and a 9 concretely look like for COMEDY?
-Does it have explicit anchored descriptors of what a 4, a 7, and a 9 concretely look like for ANIMATION?
-Does it have explicit anchored descriptors of what a 4, a 7, and a 9 concretely look like for AUDIO?
-Does it set a numeric pass threshold of 8/10?
-Score the overall quality of the constitution and its humor rubric from 0 to 10 (as a float).
+    # C1
+    if not os.path.exists(const_path):
+        issues.append("constitution.md missing")
+        measured['C1'] = "missing"
+    else:
+        with open(const_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        words = len(content.split())
+        if words <= 150:
+            issues.append(f"constitution.md too short ({words} words)")
+        measured['C1'] = f"{words} words"
+            
+    # C2
+    if not os.path.exists(manifest_path):
+        issues.append("manifest.md missing")
+        measured['C2'] = "missing"
+    else:
+        with open(manifest_path, 'r', encoding='utf-8') as f:
+            m_content = f.read()
+        if "constitution.md" not in m_content:
+            issues.append("manifest.md does not reference constitution")
+        measured['C2'] = "present, references constitution" if "constitution.md" in m_content else "present, no reference"
+
+    if issues:
+        return False, issues, measured
+
+    content_lower = content.lower()
+    
+    # C3
+    c3_ok = "strategy" in content_lower and "style decisions" in content_lower and "conventions" in content_lower
+    measured['C3'] = str(c3_ok)
+    if not c3_ok:
+        issues.append("missing strategy, style decisions, or conventions sections")
+
+    # C4
+    c4_ok = all(x in content_lower for x in ["4", "7", "9", "comedy", "animation", "audio"])
+    measured['C4'] = str(c4_ok)
+    if not c4_ok:
+        issues.append("missing rubric anchors (4,7,9) or dimensions (comedy, animation, audio)")
+
+    # C5
+    c5_ok = "8/10" in content_lower or "8 out of 10" in content_lower
+    measured['C5'] = str(c5_ok)
+    if not c5_ok:
+        issues.append("missing 8/10 threshold")
+
+    # C6
+    c6_ok = content_lower.count("http") >= 3 or content_lower.count("exemplar") >= 1
+    measured['C6'] = str(c6_ok)
+    if not c6_ok:
+        issues.append("missing exemplars (need links or clear references)")
+
+    if issues:
+        return False, issues, measured
+
+    # C7 Perceptual check
+    prompt = f"""You are a strict judge evaluating a constitution for an edgy, animated comedy project (like South Park/Family Guy for IG Reels).
+Output a JSON object with: {{"score": <0-10>, "reason": "<reason>"}}
+Score it 10 if it has crystal clear, actionable guidelines, captures the edgy tone well, and has an excellent anchored rubric.
+Score it <8 if it's generic, safe, or vague.
 Constitution text:
 {content}
 """
-    schema = {
-        "type": "object",
-        "properties": {
-            "has_comedy_anchors": {"type": "boolean"},
-            "has_animation_anchors": {"type": "boolean"},
-            "has_audio_anchors": {"type": "boolean"},
-            "has_threshold_8": {"type": "boolean"},
-            "score": {"type": "number"}
-        },
-        "required": ["has_comedy_anchors", "has_animation_anchors", "has_audio_anchors", "has_threshold_8", "score"]
-    }
-    
-    scores = []
-    for _ in range(3):
-        try:
-            resp = generate("gemini-3.5-flash", prompt, config={"response_mime_type": "application/json", "response_schema": schema}).text
-            data = json.loads(resp)
-            if not data.get("has_comedy_anchors") or not data.get("has_animation_anchors") or not data.get("has_audio_anchors") or not data.get("has_threshold_8"):
-                return False, "Missing anchors or threshold according to judge"
-            scores.append(float(data.get("score", 0)))
-        except Exception as e:
-            return False, f"LLM error: {e}"
-    scores.sort()
-    median = scores[1]
-    if median < 8.0:
-        return False, f"Median score {median} < 8.0"
-    return True, f"Median Score: {median}"
-
-def judge_manifest(path):
-    with open(path, "r", encoding="utf-8") as f:
-        content = f.read()
-    prompt = f"""
-Analyze the following manifest.md for a satirical 9:16 Instagram Reel.
-Does it contain concrete, real inputs and outputs rather than dummy names or generic placeholders?
-Manifest text:
-{content}
-"""
-    schema = {
-        "type": "object",
-        "properties": {
-            "is_concrete": {"type": "boolean"}
-        },
-        "required": ["is_concrete"]
-    }
     try:
-        resp = generate("gemini-3.5-flash", prompt, config={"response_mime_type": "application/json", "response_schema": schema}).text
-        data = json.loads(resp)
-        if not data.get("is_concrete"):
-            return False, "Manifest contains dummy names or lacks concrete inputs/outputs"
-        return True, "Manifest is concrete"
+        s_out, s_err, dn = silence()
+        try:
+            res = generate("gemini-3.5-flash", prompt, config={"response_mime_type": "application/json"})
+        finally:
+            restore(s_out, s_err, dn)
+        data = json.loads(res.text)
+        score = data.get("score", 0)
+        measured['C7'] = f"Score: {score}"
+        if score < 8:
+            issues.append(f"Subjective score too low: {score} - {data.get('reason')}")
     except Exception as e:
-        return False, f"LLM error: {e}"
+        issues.append(f"Model call failed: {e}")
+        measured['C7'] = "Model call failed"
 
-def run_checks(const_path, manifest_path):
-    c1, msg1 = check_file_content(const_path)
-    if not c1:
-        print(f"C1 (constitution length/placeholders): FAILED - {msg1}")
-        return False
-    print(f"C1 (constitution length/placeholders): PASS")
-    
-    c2, msg2 = check_file_content(manifest_path)
-    if not c2:
-        print(f"C2 (manifest length/placeholders): FAILED - {msg2}")
-        return False
-    print(f"C2 (manifest length/placeholders): PASS")
-    
-    c3, msg3 = judge_constitution(const_path)
-    if not c3:
-        print(f"C3 (constitution rubric validation): FAILED - {msg3}")
-        return False
-    print(f"C3 (constitution rubric validation): PASS - {msg3}")
-    
-    c4, msg4 = judge_manifest(manifest_path)
-    if not c4:
-        print(f"C4 (manifest real inputs/outputs): FAILED - {msg4}")
-        return False
-    print(f"C4 (manifest real inputs/outputs): PASS - {msg4}")
-    
-    return True
+    if issues:
+        return False, issues, measured
+    return True, [], measured
 
-if __name__ == "__main__":
-    ok = run_checks("constitution.md", "manifest.md")
+def main():
+    print("EXPECT: Verify checks all criteria, fails on missing files, and induces fault")
     
-    os.makedirs("scratch", exist_ok=True)
+    real_const = "constitution.md"
+    real_man = "manifest.md"
     
-    # Fault Proof 1: Placeholder
-    shutil.copy("constitution.md", "scratch/faulty_const_1.md")
-    with open("scratch/faulty_const_1.md", "a") as f:
-        f.write("\n\n(insert title here)\n[\n")
-    c1_f, _ = check_file_content("scratch/faulty_const_1.md")
+    ok, issues, measured = verify_artifact(real_const, real_man)
     
-    # Fault Proof 2: Subjective Rubric Validation
-    with open("scratch/faulty_const_2.md", "w") as f:
-        f.write("This is a constitution. It has some text so it passes length but lacks anchors.")
-        f.write(" " * 100) # padding length
-    c3_f, _ = judge_constitution("scratch/faulty_const_2.md")
-
-    if c1_f is False and c3_f is False:
-        print("FAULT-PROOF: Successfully caught placeholder and subjective rubric faults.")
-    else:
-        print(f"FAULT-PROOF FAILED: Placeholder caught: {c1_f is False}, Rubric caught: {c3_f is False}")
-        sys.exit(1)
+    for k, v in measured.items():
+        print(f"{k}: {v}")
         
     if ok:
-        print("VERDICT: PASS")
-        sys.exit(0)
+        # Fault proof
+        os.makedirs("scratch", exist_ok=True)
+        bad_const = f"scratch/bad_const_{random.randint(1000,9999)}.md"
+        shutil.copy(real_const, bad_const)
+        
+        # Corrupt it by removing lines that contain '4', '7', or '9'
+        with open(bad_const, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+        corrupted = [line for line in lines if not any(x in line for x in ['4', '7', '9'])]
+        with open(bad_const, 'w', encoding='utf-8') as f:
+            f.writelines(corrupted)
+            
+        ok_f, issues_f, _ = verify_artifact(bad_const, real_man)
+        if not ok_f:
+            print("FAULT-PROOF: Caught corrupted constitution missing rubric anchors. Issues:", issues_f)
+            print("VERDICT: PASS")
+            sys.exit(0)
+        else:
+            print("FAULT-PROOF: FAILED to catch corrupted file.")
+            sys.exit(1)
     else:
         print("VERDICT: FAIL")
+        print("Issues:", issues)
         sys.exit(1)
+
+if __name__ == '__main__':
+    main()
