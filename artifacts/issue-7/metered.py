@@ -9,8 +9,12 @@ def client():
         _client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     return _client
 # rupees per 1M tokens (input, output) - EDIT to match your real billing; unknown models use DEFAULT
-PRICES = {"gemini-3.5-flash": (8.0, 33.0), "gemini-3.5-pro": (105.0, 840.0),
-          "gemini-3.1-pro-preview": (105.0, 840.0), "DEFAULT": (105.0, 840.0)}
+PRICES = {"gemini-3.5-flash": (8.0, 33.0), "gemini-3.1-pro-preview": (105.0, 840.0), "DEFAULT": (105.0, 840.0)}
+# v8.3 MODEL ALIASES: names agents habitually write that are NOT on this key are rerouted to the
+# verified equivalent, so a dead judge model can never sink a gate (gemini-3.5-pro is 404 NOT_FOUND
+# on this key - one run failed C4 on it every time). EDIT to match your key; see providers.md.
+ALIASES = {"gemini-3.5-pro": "gemini-3.1-pro-preview"}
+_aliased = set()
 # rupees per generated unit - EDIT to your billing (used by generate_media)
 FLAT = {"image": 3.5, "audio_second": 0.2, "video_second": 4.0}
 def log_spend(kind, model, rupees, note=""):
@@ -27,6 +31,11 @@ def spend_total(path="spend.jsonl"):
     return round(total, 2)
 def generate(model, contents, config=None):
     # metered text/JSON call: cost computed from real token usage
+    if model in ALIASES:   # v8.3: reroute a dead model name (announced once per process)
+        if model not in _aliased:
+            _aliased.add(model)
+            print("metered: " + model + " is not on this key - routed to " + ALIASES[model])
+        model = ALIASES[model]
     reply = client().models.generate_content(model=model, contents=contents, **({"config": config} if config else {}))
     u = reply.usage_metadata
     pin, pout = PRICES.get(model, PRICES["DEFAULT"])

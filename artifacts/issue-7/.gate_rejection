@@ -1,0 +1,3 @@
+rejection 2/5:
+a hostile audit rejected the claim: 1. The specification explicitly demands 'Subjective quality: Scored 0-10 against rubric clarity and alignment with IG Reel/comedic standards (Pass threshold: 8).' The verifier's model prompt completely ignores this, replacing the required 0-10 quality scoring with a simple True/False checklist verifying only the presence of the rubrics. A poorly written or generic document would easily pass as long as it has the required sections.
+2. The verifier checks for a numeric pass threshold (C3) using a trivial proxy: `if 'threshold' in lower_const and '8' in lower_const:`. This does not verify that the constitution actually defines a threshold, only that the two strings happen to exist anywhere in the text.

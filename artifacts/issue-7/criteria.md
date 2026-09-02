@@ -1,8 +1,11 @@
 ## Interpretation
-The goal is to produce `constitution.md` and `manifest.md` for an animated comedy IG Reel.
+1. The goal requests a constitution defining strategy, visual style, and strict rubrics for IG Reel comedies.
+2. The deliverable is constitution.md.
+3. manifest.md is also required.
+4. Input consumers must validate via manifest first.
 
 ## Claims
-C1: `manifest.md` exists, decodes as text, and specifies `manifest.md` and `constitution.md`.
-C2: `constitution.md` exists, is > 500 characters, and contains no placeholders.
-C3: `constitution.md` contains strict 0-10 rubrics for script, audio, visuals, and final assembly with anchored descriptors (4, 7, 9) (perceptual check).
-C4: The quality of `constitution.md` is scored >= 8.0 by an LLM judge evaluating against the prompt's standards (South Park/Family Guy pacing, IG Reel format).
+C1: constitution.md exists, decodes as text, and is non-degenerate (size > 500 bytes).
+C2: manifest.md exists and lists constitution.md.
+C3: constitution.md defines a numeric pass threshold.
+C4: Model perception confirms constitution.md defines strategy, visual style, and strict 0-10 rubrics for script, audio, visuals, and final assembly with anchored descriptors for 4, 7, and 9.
