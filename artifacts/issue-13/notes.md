@@ -1,28 +1,28 @@
-# notes.md - working mind
+# Plan
+1. Write criteria.md (done)
+2. Write verify.py (red first) with fault proofs for degenerate twins. (in progress)
+3. Retrieve exemplars of 9:16 edgy animated comedy reels using a model probe to distill actual anchors.
+4. Draft constitution.md based on the distilled anchors.
+5. Draft manifest.md.
+6. Judge constitution.md against the subjective criteria (C7).
+7. Refine constitution.md based on judge feedback until median >= 8.0.
+8. Verify and Done.
 
-## Plan
-1. Establish criteria and verification (RED verify.py).
-2. Distill real Instagram animated comedy exemplars as anchors using model.
-3. Draft constitution.md with Strategy, Style, Conventions, Rubrics (4,7,9), 8/10 threshold, 3 anchors.
-4. Draft manifest.md.
-5. Run subjective judging loops to refine constitution.md.
-6. verify.py PASS and done.
+# Node Tree
+- ROOT: Goal Deliverables
+  - C1: `constitution.md` exists & non-empty [assumed]
+  - C2: `manifest.md` exists & non-empty [assumed]
+  - C3: Strategy, Style (Family Guy/South Park), Conventions present [assumed]
+  - C4: Anchored Rubric (4, 7, 9 for Comedy, Animation, Audio) [assumed]
+  - C5: Pass threshold 8/10 stated [assumed]
+  - C6: No placeholders/stubs anywhere [assumed]
+  - C7: Subjective Score >= 8.0 [assumed]
 
-## Node Tree
-- C1: constitution.md exists, size >= 1000 bytes -> [assumed]
-- C2: manifest.md exists -> [assumed]
-- C3: constitution.md contains Strategy, Style, Conventions -> [assumed]
-- C4: constitution.md contains Comedy, Animation, Audio rubrics with 4, 7, 9 descriptors -> [assumed]
-- C5: constitution.md sets 8/10 threshold -> [assumed]
-- C6: constitution.md cites >= 3 real exemplars -> [assumed]
-- C7: No placeholders -> [assumed]
-- C8: Perceptual quality score >= 8/10 -> [assumed]
+# Degenerate Twins (Failure Modes)
+1. Missing files or empty/whitespace-only files.
+2. Placeholders like 'TODO', 'insert here', 'lorem ipsum'.
+3. Missing explicit scores (4, 7, 9) or categories (Comedy, Animation, Audio).
+4. Missing threshold requirement (8/10).
+5. Subjective score fails or is judged as unhelpful/generic by the model.
 
-## Degenerate Twins
-- D1: Blank/empty/short file under 1000 bytes.
-- D2: Placeholders like "TODO" or "Lorem Ipsum".
-- D3: Missing explicit anchors for 4, 7, 9.
-- D4: Missing specific sections (Strategy, Style).
-
-## Facts
-F1 | Instagram scraping is blocked; will use strong model knowledge to recall exemplars | [verified] turn 1
+# Facts

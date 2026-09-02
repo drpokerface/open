@@ -1,2 +1,13 @@
-{"t": 1788306765.464364, "kind": "llm", "model": "gemini-3.1-pro-preview", "inr": 2.1573, "note": ""}
-{"t": 1788306962.1158853, "kind": "llm", "model": "gemini-3.1-pro-preview", "inr": 0.6438, "note": ""}
+{"t": 1788307242.0915291, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.044, "note": ""}
+{"t": 1788307247.0979, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0341, "note": ""}
+{"t": 1788307402.9711154, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.1409, "note": ""}
+{"t": 1788307489.392571, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0332, "note": ""}
+{"t": 1788307573.60726, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0238, "note": ""}
+{"t": 1788307618.4258206, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0298, "note": ""}
+{"t": 1788308234.680532, "kind": "llm", "model": "gemini-3.1-pro-preview", "inr": 0.3876, "note": ""}
+{"t": 1788308559.0965629, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0328, "note": ""}
+{"t": 1788309429.3938024, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0277, "note": ""}
+{"t": 1788309486.3337395, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0282, "note": ""}
+{"t": 1788309926.9923186, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0259, "note": ""}
+{"t": 1788309937.765314, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0309, "note": ""}
+{"t": 1788309975.3175676, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0333, "note": ""}
