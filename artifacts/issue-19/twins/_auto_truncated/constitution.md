@@ -1,27 +1,25 @@
-# Constitution: Animated Comedy Instagram Reels
+# Constitution: Animated Comedy Shorts Pipeline
 
-## 1. Goal-Specialized Philosophy
-Our objective is to generate world-class, short-form animated comedy videos (under 2 minutes) optimized for Instagram Reels (1080x1920 vertical format). The stylistic lodestars are *Family Guy* and *South Park*: unapologetically satirical, culturally observant, slightly edgy, and fiercely reliant on immaculate comedic timing. 
+## Outside Anchors
 
-To achieve this in a 9:16 scrolling environment, the following core principles apply:
-*   **The 3-Second Hook:** The doomscroll is merciless. Videos must open *in media res* with high-stakes absurdity, a controversial statement, or a visual non-sequitur. No slow fade-ins.
-*   **Vertical Dynamism (9:16):** Do not just crop a 16:9 video. The composition must be native to the vertical frame. Use extreme close-ups for dramatic/comedic effect, and stack characters vertically if they are conversing.
-*   **Precision Timing & Cutaways:** Comedy is math. Utilize abrupt cuts, micro-pauses (the "blink"), and deadpan silence to contrast with chaotic action. The *Family Guy* cutaway structure is highly effective here if paced correctly.
-*   **Sonic Punch:** Audio dictates the pacing. Dialogue must be crisp, rapid, and distinct. Layered, recognizable sound effects and abrupt audio cuts (cutting off a scream or music track instantly) are required for punchlines.
-*   **Edgy, Satirical Core:** The humor must punch up or sideways, tackling modern cultural absurdities. It should push boundaries and evoke a strong reaction while remaining clever enough to avoid being merely offensive for shock value.
+To achieve top-tier performance in vertical animated comedy, we anchor our standards to the following highly successful creators and formats in the Instagram Reel / TikTok space:
 
-## 2. Outside Anchors
-To ground our generated output, we draw upon the following real-world exemplars of animated comedy tailored to or thriving in short-form vertical video:
+1.  **MeatCanyon (Short-form edits/Reels)**
+    *   *Why it succeeds:* Masterful use of the visual hook. Within the first three seconds, the viewer is presented with a grotesque, deeply unsettling, or bizarre visual that forces them to stop scrolling. The audio clarity is immaculate, juxtaposing high-quality, theatrical voice acting with absurd subject matter. Tension escalates rapidly.
+2.  **South Park Official Reels**
+    *   *Why it succeeds:* Unbeatable comedic timing and deadpan delivery. These clips prove that you do not need hyperactive animation if the dialogue and timing are perfect. The use of abrupt silence, awkward pauses, and highly legible, stylized subtitles keeps mobile viewers engaged even with the sound off.
+3.  **Flashgitz (Shorts/Reels)**
+    *   *Why it succeeds:* Aggressive pacing and razor-sharp satire. Flashgitz relies heavily on exaggerated sound design (loud impacts, dramatic musical swells) that abruptly cut out for the punchline. They are masters of the "escalation" joke, taking a simple premise to its most extreme conclusion in under 60 seconds.
+4.  **Cyanide & Happiness (Explosm Shorts)**
+    *   *Why it succeeds:* Strict economy of storytelling. Minimalist character designs allow the focus to remain entirely on the writing and audio. They utilize a distinct setup-punchline-subversion rhythm, proving that strong, unexpected narrative turns are more important than complex rendering.
 
-1.  **Family Guy - The "Cutaway Gag" Vertical Clips**
-    *   *Exemplifies:* The art of the immediate pivot. A mundane setup abruptly hard-cuts to an absurd, visually distinct historical or pop-culture scenario. It teaches us economy of storytelling—establishing a joke's premise in exactly one sentence before delivering the visual punchline.
-2.  **South Park - Cartman's Rapid-Fire Rants (TikTok/Reel Edits)**
-    *   *Exemplifies:* Character-driven audio pacing and the "escalation of stakes." These clips show how a character starting at a 3/10 in anger and escalating to a 10/10 within 15 seconds hooks the viewer. Visually, it relies on minimal but highly expressive eye/mouth movements, proving that script and voice acting trump fluid animation.
-3.  **MeatCanyon - YouTube Shorts / Instagram Reels**
-    *   *Exemplifies:* Grotesque visual satire and extreme audio contrast. MeatCanyon shorts excel at taking recognizable pop-culture figures and pushing them into unsettling territory. It teaches the power of extreme close-ups, uncomfortable pauses, and ASMR-style whispers suddenly contrasted with loud bursts of audio for comedic shock value.
+**Distilled Success Factors:** Immediate visual/audio hooks within 3 seconds, pristine voice acting, deliberate use of comedic pauses (cutting the music/SFX for the punchline), aggressive but targeted satire, and centralized vertical framing with bold subtitles.
 
-## 3. Scoring Rubric
-Every generated video is evaluated against a 10-point scale based on strict technical adherence, visual framing, timing, and audio execution. 
+## Philosophy
 
-*   **Score 4: (Poor):** Quantifiable failure of the short-form format. The time-to-first (TTF) comedic hook exceeds 72 frames (3.0 seconds at 24fps). Resolution padding is detected (e.g., 16:9 content nested with letterboxing comprising >5% of the 2,073,600 total pixels). Audio dynamic range is flat (RMS variance < 3dB), True Peak exceeds 0.0 dBTP (clipping), or audio LUFS falls outside the -20 to -10 range. Visuals lack Y-axis utilization, and duration exceeds 120.00 seconds. 
-*   **Score 7: (Good):** The video meets absolute technical baseline standards. Resolution is strictly 1080x1920 with a Display Aspect Ratio (DAR) of 9:16 and S
+As an autonomous creator pipeline for animated comedy, every video generated must adhere to the following core directives. We are creating edgy, satirical, timing-focused comedy for a highly distracted mobile audience. 
+
+*   **The 3-Second Hook:** The video must begin *in media res*. No slow fade-ins, no title cards, no long establishing shots. The first 3 seconds must feature a visually striking moment, an instantly recognizable satirical premise, or a loud/controversial line of dialogue.
+*   **Targeted Edges, Not Pointless Shock:** The humor should echo Family Guy or South Park—satirical, boundary-pushing, and willing to mock societal absurdities. However, the edge must serve a joke. Shock value without a clever punchline or subversion is prohibited.
+*   **Audio is the Director:** Animation serves the audio, not the other way around. Voice acting must be expressive and clear. Sound design must be dynamic: use background music to build tension or set a scene, and *hard cut* the music to absolute silence to deliver a deadpan punchline. 
+*   **Vertical-First Framing (9:16):** The video is for Instagram Reels. All crucial action, character expressions, and focal points must occur in the center-middle of the screen. The top and bottom 15% of th

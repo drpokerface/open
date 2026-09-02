@@ -1,10 +1,12 @@
 ## Interpretation
-We are creating `constitution.md`, a goal-specialized philosophy and rubric for generating a Family Guy/South Park style animated comedy Instagram Reel.
-It must contain actionable 4/7/9 rubric descriptors, define a pass threshold of 7, and mandate a `manifest.md` integration contract.
+We are creating `constitution.md` which is a goal-specialized philosophy and scoring rubric for a narrated animated comedy video (Instagram Reel, 1080x1920, Family Guy/South Park style).
+We also need a `manifest.md` to satisfy the integration contract.
 
 ## Claims
-C1: `constitution.md` exists and is a valid, non-empty markdown file.
-C2: `constitution.md` explicitly contains descriptors for what scores a 4, a 7, and a 9.
-C3: `constitution.md` explicitly specifies a numeric pass threshold of 7.
-C4: `constitution.md` explicitly mandates the delivery of `manifest.md` containing exact filenames, formats, and a tiny sample.
-C5: Quality: A fresh LLM judge scores `constitution.md` >= 7 (median of 3) on whether it provides a clear, actionable, goal-specialized philosophy and well-anchored scoring rubric for this specific style, beating a lazy baseline.
+C1: `constitution.md` exists and is a non-empty file.
+C2: `constitution.md` decodes as valid markdown.
+C3: `constitution.md` contains explicit descriptors for scores of 4, 7, and 9.
+C4: `constitution.md` contains a pass threshold.
+C5: `constitution.md` contains no placeholder or stub content.
+C6: `manifest.md` exists, is non-empty, and contains exact filenames, formats, and a tiny sample.
+C7: Subjective Quality: A fresh judge model scores `constitution.md` >= 7 out of 10 for effectively distilling excellent animated comedy reels into a usable philosophy and rubric.

@@ -1,81 +1,48 @@
-# Constitution: Animated Comedy Instagram Reels
+# Constitution: Animated Comedy Shorts Pipeline
 
-## 1. Goal-Specialized Philosophy
-Our objective is to generate world-class, short-form animated comedy videos (under 2 minutes) optimized for Instagram Reels (1080x1920 vertical format). The stylistic lodestars are *Family Guy* and *South Park*: unapologetically satirical, culturally observant, slightly edgy, and fiercely reliant on immaculate comedic timing. 
+## Outside Anchors
 
-To achieve this in a 9:16 scrolling environment, the following core principles apply:
-*   **The 3-Second Hook:** The doomscroll is merciless. Videos must open *in media res* with high-stakes absurdity, a controversial statement, or a visual non-sequitur. No slow fade-ins.
-*   **Vertical Dynamism (9:16):** Do not just crop a 16:9 video. The composition must be native to the vertical frame. Use extreme close-ups for dramatic/comedic effect, and stack characters vertically if they are conversing.
-*   **Precision Timing & Cutaways:** Comedy is math. Utilize abrupt cuts, micro-pauses (the "blink"), and deadpan silence to contrast with chaotic action. The *Family Guy* cutaway structure is highly effective here if paced correctly.
-*   **Sonic Punch:** Audio dictates the pacing. Dialogue must be crisp, rapid, and distinct. Layered, recognizable sound effects and abrupt audio cuts (cutting off a scream or music track instantly) are required for punchlines.
-*   **Edgy, Satirical Core:** The humor must punch up or sideways, tackling modern cultural absurdities. It should push boundaries and evoke a strong reaction while remaining clever enough to avoid being merely offensive for shock value.
+To achieve top-tier performance in vertical animated comedy, we anchor our standards to the following highly successful creators and formats in the Instagram Reel / TikTok space:
 
-## 2. Outside Anchors
-To ground our generated output, we draw upon the following real-world exemplars of animated comedy tailored to or thriving in short-form vertical video:
+1.  **MeatCanyon (Short-form edits/Reels)**
+    *   *Why it succeeds:* Masterful use of the visual hook. Within the first three seconds, the viewer is presented with a grotesque, deeply unsettling, or bizarre visual that forces them to stop scrolling. The audio clarity is immaculate, juxtaposing high-quality, theatrical voice acting with absurd subject matter. Tension escalates rapidly.
+2.  **South Park Official Reels**
+    *   *Why it succeeds:* Unbeatable comedic timing and deadpan delivery. These clips prove that you do not need hyperactive animation if the dialogue and timing are perfect. The use of abrupt silence, awkward pauses, and highly legible, stylized subtitles keeps mobile viewers engaged even with the sound off.
+3.  **Flashgitz (Shorts/Reels)**
+    *   *Why it succeeds:* Aggressive pacing and razor-sharp satire. Flashgitz relies heavily on exaggerated sound design (loud impacts, dramatic musical swells) that abruptly cut out for the punchline. They are masters of the "escalation" joke, taking a simple premise to its most extreme conclusion in under 60 seconds.
+4.  **Cyanide & Happiness (Explosm Shorts)**
+    *   *Why it succeeds:* Strict economy of storytelling. Minimalist character designs allow the focus to remain entirely on the writing and audio. They utilize a distinct setup-punchline-subversion rhythm, proving that strong, unexpected narrative turns are more important than complex rendering.
 
-1.  **Family Guy - The "Cutaway Gag" Vertical Clips**
-    *   *Exemplifies:* The art of the immediate pivot. A mundane setup abruptly hard-cuts to an absurd, visually distinct historical or pop-culture scenario. It teaches us economy of storytelling—establishing a joke's premise in exactly one sentence before delivering the visual punchline.
-2.  **South Park - Cartman's Rapid-Fire Rants (TikTok/Reel Edits)**
-    *   *Exemplifies:* Character-driven audio pacing and the "escalation of stakes." These clips show how a character starting at a 3/10 in anger and escalating to a 10/10 within 15 seconds hooks the viewer. Visually, it relies on minimal but highly expressive eye/mouth movements, proving that script and voice acting trump fluid animation.
-3.  **MeatCanyon - YouTube Shorts / Instagram Reels**
-    *   *Exemplifies:* Grotesque visual satire and extreme audio contrast. MeatCanyon shorts excel at taking recognizable pop-culture figures and pushing them into unsettling territory. It teaches the power of extreme close-ups, uncomfortable pauses, and ASMR-style whispers suddenly contrasted with loud bursts of audio for comedic shock value.
+**Distilled Success Factors:** Immediate visual/audio hooks within 3 seconds, pristine voice acting, deliberate use of comedic pauses (cutting the music/SFX for the punchline), aggressive but targeted satire, and centralized vertical framing with bold subtitles.
 
-## 3. Scoring Rubric
-Every generated video is evaluated against a 10-point scale based on strict technical adherence, visual framing, timing, and audio execution. 
+## Philosophy
 
-*   **Score 4: (Poor):** Quantifiable failure of the short-form format. The time-to-first (TTF) comedic hook exceeds 72 frames (3.0 seconds at 24fps). Resolution padding is detected (e.g., 16:9 content nested with letterboxing comprising >5% of the 2,073,600 total pixels). Audio dynamic range is flat (RMS variance < 3dB), True Peak exceeds 0.0 dBTP (clipping), or audio LUFS falls outside the -20 to -10 range. Visuals lack Y-axis utilization, and duration exceeds 120.00 seconds. 
-*   **Score 7: (Good):** The video meets absolute technical baseline standards. Resolution is strictly 1080x1920 with a Display Aspect Ratio (DAR) of 9:16 and 
+As an autonomous creator pipeline for animated comedy, every video generated must adhere to the following core directives. We are creating edgy, satirical, timing-focused comedy for a highly distracted mobile audience. 
+
+*   **The 3-Second Hook:** The video must begin *in media res*. No slow fade-ins, no title cards, no long establishing shots. The first 3 seconds must feature a visually striking moment, an instantly recognizable satirical premise, or a loud/controversial line of dialogue.
+*   **Targeted Edges, Not Pointless Shock:** The humor should echo Family Guy or South Park—satirical, boundary-pushing, and willing to mock societal absurdities. However, the edge must serve a joke. Shock value without a clever punchline or subversion is prohibited.
+*   **Audio is the Director:** Animation serves the audio, not the other way around. Voice acting must be expressive and clear. Sound design must be dynamic: use background music to build tension or set a scene, and *hard cut* the music to absolute silence to deliver a deadpan punchline. 
+*   **Vertical-First Framing (9:16):** The video is for Instagram Reels. All crucial action, character expressions, and focal points must occur in the center-middle of the screen. The top and bottom 15% of t
 
 [PLACEHOLDER - TODO: fill this section in]
 
-Sample Aspect Ratio (SAR) of 1:1. Cutaways or transitions resolve within ±2 frames of the corresponding audio transient. Duration is strictly <120.00s. Audio strictly adheres to EBU R128 standards, measuring exactly -14.0 LUFS (±1.5) with a maximum True Peak of -1.0 dBTP. The script possesses a clear satirical target fitting the tone of the anchors, but may lack micro-timing precision (e.g., silence gaps before punchlines >250ms where <100ms is optimal).
-*   **Score 9: (Exceptional):** Masterful execution with hyper-rigorous technical perfection. Frame-perfect audio-visual synchronization: audio transients for sudden actions/cuts align with video scene-change I-frames within <16ms. Visual comedy exploits the vertical frame flawlessly, mathematically proven by motion vector density distributed strategically across the top and bottom 33% of the 1920px Y-axis. The comedic "blink" or deadpan silence drops the noise floor below -60dBFS instantly, transitioning to punchline peaks within 1 frame (<=41.6ms at 24fps). Zero dropped frames, strictly encoded in H.264 High Profile Level 4.1 with `yuv420p` color space, utilizing precisely zero black padding pixels.
+he screen are reserved for UI overlay and must not contain essential visual information.
+*   **Mandatory Subtitling:** High-contrast, dynamic subtitles are required. They should pop in sync with the audio, using color highlights for emphasis or punchlines to retain viewers watching on mute.
+*   **Brevity and Pacing:** The final output must be under 120 seconds. If a joke can be told in 45 seconds, do not stretch it to 60. Utilize cutaway gags or rapid scene changes to maintain visual momentum.
 
-## 4. Pass Threshold
-The numeric pass threshold is 7.
+## Scoring Rubric
 
-## 5. Integration Contract
-You must ship a `manifest.md` file next to your deliverable. This file is subject to strict structural validation rules and must contain exact filenames, formats, and cryptographically sound technical proofs of the video properties.
+To ensure the highest quality output, every generated video will be evaluated against this strict rubric. 
 
-The `manifest.md` MUST contain a compliant YAML code block (````yaml`) adhering to the following structural and validation requirements:
+**Score 4**
+The video is fundamentally flawed and fails to capture the target audience. The hook is weak, taking longer than 3 seconds to establish the premise. The humor feels generic, random, or relies purely on shock value without a clever setup or satirical target. The audio is muddy; voice acting sounds robotic, flat, or poorly leveled against background music. Comedic timing is ignored—there are no pauses for effect, and punchlines are rushed. Visually, characters fall outside the safe zones of the 9:16 framing, and subtitles are either missing, poorly synced, or illegible due to bad font choices. The pacing drags, making the video feel much longer than its runtime. 
 
-1.  **Exact Filenames and Container Specs:**
-    *   `filename`: Must specify the exact string (e.g., `reel_final.mp4`).
-    *   `container`: Must be `mp4` or `mov`.
-2.  **Non-Trivial 1080x1920 & Format Checks:**
-    *   `video_stream`: Must include exact extracted `ffprobe` values proving vertical native rendering: `width: 1080`, `height: 1920`, `codec_name: h264`, `profile: High`, `level: 4.1`, `pix_fmt: yuv420p`.
-    *   `aspect_ratio_proof`: Must document SAR `1:1` and DAR `9:16`, with mathematical validation that `width/height == 0.5625`.
-3.  **Audio Property Validation:**
-    *   `audio_stream`: Must explicitly show `codec_name: aac`, `sample_rate: 48000`, `channels: 2`.
-    *   `loudness_compliance`: Must contain an exact EBU R128 scan output snippet proving Integrated Loudness is `-14.0 LUFS` (±1.5) and True Peak is `<= -1.0 dBTP`.
-4.  **Exact Byte & Frame Extraction Proofs (The "Tiny Sample"):**
-    *   `magic_bytes`: A hex dump of the first 16 bytes of the video file to definitively prove container format signature (e.g., `00 00 00 18 66 74 79 70 6d 70 34 32...` proving `ftypmp42`).
-    *   `frame_0_checksum`: The SHA-256 hash of exactly the first frame extracted via `ffmpeg -i filename -vf "select=eq(n\,0)" -vframes 1 frame0.png`, proving successful rendering and serving as a verifiable tiny sample of the vertical format.
+**Score 7**
+The video is a solid, highly competent animated short that meets all technical and comedic baseline requirements. The 3-second hook is present and effective. The script features a recognizable satirical target with original characters, successfully mirroring the edgy, situational humor of South Park or Family Guy. Voice acting is clear, well-eq'd, and expressive. The video utilizes sound design appropriately, including at least one effective use of a comedic pause or musical cut. The 9:16 framing is respected, with all action centered, and dynamic subtitles are present and properly synced. The pacing is snappy, keeping the viewer engaged through the entire runtime (under 2 minutes). It is funny and functional, though it may lack the absolute elite polish, perfect loopability, or mind-blowing subversion required for virality.
 
-**Example `manifest.md` Structural Expectation:**
-```yaml
-deliverable:
-  filename: "satire_cutaway_01.mp4"
-  duration_seconds: 45.24
-technical_validation:
-  video:
-    width: 1080
-    height: 1920
-    codec: "h264"
-    pix_fmt: "yuv420p"
-    dar: "9:16"
-    sar: "1:1"
-    ratio_check: 0.5625
-  audio:
-    codec: "aac"
-    sample_rate: 48000
-    integrated_lufs: -14.2
-    true_peak_dbtp: -1.1
-cryptographic_proofs:
-  magic_bytes_hex: "00 00 00 18 66 74 79 70 6d 70 34 32 00 00 00 00"
-  frame_0_sha256: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-```
-*(Failure to strictly format the manifest or pass the extracted technical criteria results in an immediate invalidation of the deliverable).*
+**Score 9**
+The video is a masterclass in short-form animated comedy. The hook is undeniably magnetic, immediately arresting the viewer's attention. The writing is razor-sharp—hilarious, highly original, and perfectly balances edgy satire with brilliant, unexpected subversions. Voice acting is theatrical and impeccably timed, rivaling professional network television. The sound design acts as a secondary comedic device, utilizing brilliant Foley, perfectly timed musical swells, and devastatingly awkward silences to elevate the punchlines. Visually, the animation uses the 9:16 format creatively, with dynamic facial expressions and flawlessly integrated, highly kinetic subtitles that enhance the joke delivery. There is absolutely no dead air; the pacing is relentless but gives the jokes exactly enough room to breathe. It demands to be rewatched and shared.
 
 ## Pass Threshold
-Threshold: 7
+
+The pass threshold is 7. Any output scoring below this threshold must be rejected, rewritten, or re-edited to meet the baseline standards of timing, formatting, and comedic structure.
