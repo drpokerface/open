@@ -1,9 +1,15 @@
-# Notes
-## Plan
-1. criteria.md and twins setup [done]
-2. verify.py (extract frames/audio, run perceptual/judging models)
-3. capabilities.md and manifest.md
-4. Build rough video and iterate on sync/humor.
+# notes.md - Node Tree and Facts
 
-## Findings
-- moviepy TextClip: failed, must use Pillow (OSError)
+## Node Tree
+- [ ] C1: `capabilities.md` exists
+- [ ] C2: `manifest.md` exists and contains required fields
+- [ ] C3: `tracer_slice.mp4` exists and is a valid video
+- [ ] C4: `tracer_slice.mp4` is approximately 10 seconds long
+- [ ] C5: `tracer_slice.mp4` contains an audio track
+- [ ] C6: Perceptual check: shapes and text
+- [ ] C7: Perceptual check: cutaway
+- [ ] C8: Subjective quality >= 8.0
+
+## Facts
+- [assumed] moviepy can render 1080x1920 quickly enough
+- [assumed] Pillow can draw geometric shapes for video frames

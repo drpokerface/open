@@ -1,0 +1,2 @@
+# lessons.md - every rejection this task has received; the auditor reads this list too
+- [earlier attempt (#5532213267)] VERIFY: FAIL by worker-1 (drpokerface) its own RESULT reports the gate was not passed - sent back for retry, not closed. gate: NOT passed (ran out of turns, budget, or rejections) why: Stopping: progress velocity collapsed - only 2 of the last 12 turns advanced; a retry that starts from the lessons beats spinning here.

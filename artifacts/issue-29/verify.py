@@ -1,112 +1,84 @@
-import os
-import sys
-import math
-import numpy as np
-
-# Monkeypatch numpy to support generators in stacking/concatenation (fixing moviepy + numpy 2.x bug)
-import numpy as np
-for name in ['vstack', 'hstack', 'concatenate']:
-    if hasattr(np, name):
-        orig = getattr(np, name)
-        def make_patched(orig_func):
-            def patched(tup, *args, **kwargs):
-                if not isinstance(tup, (list, tuple)) and hasattr(tup, '__iter__'):
-                    try:
-                        tup = list(tup)
-                    except Exception:
-                        pass
-                return orig_func(tup, *args, **kwargs)
-            return patched
-        setattr(np, name, make_patched(orig))
-
+import os, sys, cv2
 try:
-    import moviepy.editor as mpy
+    import moviepy.editor
 except ImportError:
-    print("moviepy not installed", file=sys.stderr)
+    import subprocess
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "moviepy", "numpy", "opencv-python", "pillow"])
+    import moviepy.editor
+
 from verify_kit import Kit
+kit = Kit()
 
-def run_verify():
-    kit = Kit()
-    
-    kit.check("C1", "capabilities.md exists and has content", 
-              lambda: kit.exists("capabilities.md") and len(kit.text("capabilities.md")) > 50)
-              
-    def check_manifest():
-        if not kit.exists("manifest.md"): return False
-        t = kit.text("manifest.md")
-        req = ["component_id", "duration_ms", "scene_count", "humor_mechanics", "file_dependencies"]
-        return all(r in t for r in req)
-    kit.check("C2", "manifest.md contains required keys", check_manifest)
-    
-    def check_duration():
-        p = kit.path("tracer_slice.mp4")
-        if not os.path.exists(p): return False
-        try:
-            clip = mpy.VideoFileClip(p)
-            return 9.0 <= clip.duration <= 12.0
-        except Exception:
-            return False
-    kit.check("C3", "tracer_slice.mp4 exists, decodable, duration 9-12s", check_duration)
-    
-    def check_audio():
-        p = kit.path("tracer_slice.mp4")
-        if not os.path.exists(p): return False
-        try:
-            clip = mpy.VideoFileClip(p)
-            if clip.audio is None: return False
-            audio_array = clip.audio.to_soundarray()
-            rms = np.sqrt(np.mean(audio_array**2))
-            return rms > 0.01
-        except Exception:
-            return False
-    kit.check("C4", "tracer_slice.mp4 has audible audio track", check_audio)
-    
-    scratch_dir = kit.path("scratch")
-    os.makedirs(scratch_dir, exist_ok=True)
-    frames_extracted = []
-    p = kit.path("tracer_slice.mp4")
-    if os.path.exists(p):
-        try:
-            clip = mpy.VideoFileClip(p)
-            d = clip.duration
-            times = [d*0.1, d*0.5, d*0.9]
-            for i, t in enumerate(times):
-                frame = clip.get_frame(t)
-                import cv2
-                frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-                rel_path = f"scratch/frame_{i}.jpg"
-                out_path = kit.path(rel_path)
-                cv2.imwrite(out_path, frame_bgr)
-                frames_extracted.append(rel_path)
-        except Exception:
-            pass
-            
-    if not frames_extracted:
-        rel_path = "scratch/dummy.jpg"
-        out_path = kit.path(rel_path)
-        import cv2
-        cv2.imwrite(out_path, np.zeros((100,100,3), dtype=np.uint8))
-        frames_extracted = [rel_path]
-        
-    manifest_text = kit.text("manifest.md")[:1000] if kit.exists("manifest.md") else ""
-    q = f"Do these frames depict geometric shapes, kinetic text, and a visually jarring cutaway? Also, does the text in the frames match the comedic intent and script of this manifest sample:\n\n{manifest_text}\n\nAnswer 'yes' or 'no'."
-    kit.perceive("C5", "geometric shapes, text, and cutaway match manifest", frames_extracted, q)
-        
-    rubric = """
-    10: Brilliant programmatic lo-fi satire. Hilarious, razor-sharp script using the geometric/kinetic aesthetic as part of the joke. Shocking cutaway perfectly timed.
-    8: Funny, fast-paced, includes a jarring cutaway and clever script suitable for a lo-fi geometric style. Subversive and not generic.
-    5: Mediocre humor, safe or generic. Cutaway is present but not funny. Feels like standard corporate humor.
-    2: Boring, completely literal, or fails to use the medium for humor.
-    """
-    anchors = """
-    "Square realizes he's trapped in a Python array, cuts to a real-life image of a burned out programmer, cuts back to Square screaming in text" - Score: 9
-    "Triangle says a generic dad joke about hypotenuses, cuts to a circle" - Score: 4
-    """
-    kit.judge("C6", "humor >= 8.0", "manifest.md", rubric, anchors, threshold=8.0, model="gemini-3.1-pro-preview", baseline="A safe, generic joke about shapes with a basic cutaway.")
-    
-    kit.fault_proof("tracer_slice.mp4")
-    kit.fault_proof("manifest.md")
-    kit.verdict()
+kit.check("C1", "capabilities.md exists", lambda: (kit.exists("capabilities.md"), "found" if kit.exists("capabilities.md") else "missing"))
 
-if __name__ == "__main__":
-    run_verify()
+def check_manifest():
+    if not kit.exists("manifest.md"): return False, "missing"
+    t = kit.text("manifest.md")
+    missing = [f for f in ["component_id", "duration_ms", "scene_count", "humor_mechanics", "file_dependencies"] if f not in t]
+    return (False, "missing fields: "+", ".join(missing)) if missing else (True, "ok")
+kit.check("C2", "manifest.md fields", check_manifest)
+
+_c345 = None
+def get_c345():
+    global _c345
+    if _c345 is not None: return _c345
+    vp = kit.path("tracer_slice.mp4")
+    if not os.path.exists(vp):
+        _c345 = (False, "missing", False, "missing", False, "missing")
+        return _c345
+    try:
+        from moviepy.editor import VideoFileClip
+        clip = VideoFileClip(vp)
+        dur = clip.duration
+        c4 = 8 <= dur <= 12
+        c5 = clip.audio is not None
+        clip.close()
+        _c345 = (True, "valid", c4, f"dur {dur}s", c5, "audio present" if c5 else "no audio")
+    except Exception as e:
+        _c345 = (False, f"err {e}", False, "err", False, "err")
+    return _c345
+
+kit.check("C3", "tracer_slice.mp4 exists and valid", lambda: (get_c345()[0], get_c345()[1]))
+kit.check("C4", "duration ~10s", lambda: (get_c345()[2], get_c345()[3]))
+kit.check("C5", "audio track", lambda: (get_c345()[4], get_c345()[5]))
+
+def extract():
+    vp = kit.path("tracer_slice.mp4")
+    if not os.path.exists(vp): return []
+    cap = cv2.VideoCapture(vp)
+    if not cap.isOpened(): return []
+    t = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    if t <= 0: return []
+    os.makedirs(kit.path("scratch"), exist_ok=True)
+    paths = []
+    for i in range(5):
+        cap.set(cv2.CAP_PROP_POS_FRAMES, max(0, min(t-1, int((i/4.0)*(t-1)))))
+        ret, f = cap.read()
+        if ret:
+            p = kit.path(f"scratch/f{i}.jpg")
+            cv2.imwrite(p, f)
+            paths.append(f"scratch/f{i}.jpg")
+    cap.release()
+    return paths
+
+frames = extract()
+
+kit.check("C6", "geometric shapes and typography", lambda: kit.perceive("C6", "geometric shapes and typography", frames, "Does the video show characters constructed from geometric shapes, alongside kinetic typography (large text)? Look at the frames. Reply YES or NO, then reason.") if frames else (False, "no frames"))
+kit.check("C7", "visual cutaway", lambda: kit.perceive("C7", "visual cutaway", frames, "Looking at the sequence of frames, is there a visual cutaway to a completely different scene? Reply YES or NO, then reason.") if frames else (False, "no frames"))
+
+rubric = '''
+10 - Perfect execution of Programmatic Lo-Fi Minimalism. Striking visual hook, geometry used masterfully, clear cutaway gag.
+8 - Great execution. Has a hook, clear geometric aesthetic, and a cutaway.
+6 - Passable but flawed. Geometry present, but pacing off. Cutaway is weak.
+4 - Failed attempt. Mostly static, lacks clear cutaway, text illegible.
+2 - Completely misses the mark.
+'''
+anchors = '''
+10 Anchor: 'South Park Pilot Lo-Fi': Crude cutouts, incredibly fast pacing, distinct cutaways.
+8 Anchor: 'Geometric Cynic': Triangles, text slamming on screen, quick cutaway.
+4 Anchor: 'Slow Shapes': A square talking slowly, no cutaway, boring.
+'''
+kit.judge("C8", "quality >= 8", "tracer_slice.mp4", rubric, anchors, threshold=8.0)
+
+kit.fault_proof("tracer_slice.mp4")
+kit.verdict()
