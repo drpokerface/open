@@ -68,5 +68,17 @@ anchors = """
 
 kit.judge("C5", "Quality >= 8", "slice.html", rubric, anchors, threshold=8.0)
 
+
+def check_capabilities():
+    if not kit.exists("capabilities.md"): return False
+    text = kit.text("capabilities.md")
+    if len(text) < 50: return False
+    from metered import generate
+    prompt = "Analyze this text. Does it document findings from a capability probe for generation tools (like TTS, models, or browser APIs)? Answer strictly YES or NO."
+    ans = generate("gemini-3.5-flash", [prompt, text]).text
+    return isinstance(ans, str) and "YES" in ans.upper()
+
+kit.check("C6", "Capabilities probe documented", check_capabilities)
+
 kit.fault_proof("slice.html")
 kit.verdict()

@@ -12,3 +12,5 @@
 - **C3**: `slice.html` contains a 9:16 aspect ratio constraint.
 - **C4**: Perceptual - Code contains TTS subtitle synchronization logic and a cutaway transition.
 - **C5**: Subjective - Judges score the content >= 8.0 against the constitution.
+
+C6: `capabilities.md` exists, is non-empty, and documents the findings of the capability probe.
