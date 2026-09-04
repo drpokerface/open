@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tracer Slice</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    background: #111;
+  }
+  #container {
+    width: 100vw;
+    max-width: 56.25vh;
+    aspect-ratio: 9/16;
+    background: #87CEEB;
+    position: relative;
+    overflow: hidden;
+  }
+  .cutaway-active #scene-main { display: none; }
+  .cutaway-active #scene-cutaway { 
+    display: block; 
+    animation: flashIn 0.2s ease-out forwards;
+  }
+  @keyframes flashIn {
+    0% { opacity: 0; transform: scale(1.2) rotate(-5deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+  
+  #scene-cutaway { display: none; background: #FF9999; width: 100%; height: 100%; position: absolute; top:0; left:0; }
+  #scene-main { width: 100%; height: 100%; position: absolute; top:0; left:0; }
+  
+  /* Triangle Character */
+  #todd {
+    position: absolute;
+    bottom: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .talking #todd-mouth {
+    animation: mouthFlap 0.15s infinite alternate;
+    transform-origin: 50% 50%;
+  }
+  @keyframes mouthFlap {
+    0% { transform: scaleY(0.2); }
+    100% { transform: scaleY(1.8); }
+  }
+
+  /* Cutaway Character */
+  #sphere {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: bounce 0.3s infinite alternate ease-in-out;
+  }
+  @keyframes bounce {
+    0% { top: 30%; transform: translateX(-50%) scale(1); }
+    100% { top: 25%; transform: translateX(-50%) scale(1.05); }
+  }
+
+  /* Subtitles */
+  #subtitles {
+    position: absolute;
+    bottom: 8%;
+    width: 90%;
+    left: 5%;
+    text-align: center;
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: 3.5vh;
+    color: white;
+    text-transform: uppercase;
+    -webkit-text-stroke: 1.5px black;
+    text-shadow: 3px 3px 0px #000;
+    pointer-events: none;
+  }
+  
+  /* Start button */
+  #start {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3vh;
+    padding: 15px 30px;
+    z-index: 100;
+    cursor: pointer;
+    background: #ffcc00;
+    border: 3px solid black;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div id="container">
+  <button id="start">PLAY SCENE</button>
+  
+  <div id="scene-main">
+    <svg id="todd" width="250" height="250" viewBox="0 0 100 100">
+      <!-- Triangle -->
+      <polygon points="50,10 90,90 10,90" fill="#32CD32" stroke="black" stroke-width="3"/>
+      <!-- Eyes -->
+      <circle cx="40" cy="50" r="6" fill="white" stroke="black" stroke-width="1.5"/>
+      <circle cx="60" cy="50" r="6" fill="white" stroke="black" stroke-width="1.5"/>
+      <!-- Pupils -->
+      <circle cx="40" cy="50" r="2" fill="black" />
+      <circle cx="60" cy="50" r="2" fill="black" />
+      <!-- Unimpressed Eyebrows -->
+      <line x1="32" y1="42" x2="48" 
