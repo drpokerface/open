@@ -5,7 +5,12 @@ from metered import generate
 kit = Kit()
 
 def check_manifest():
+    # As per the goal, manifest.md provides "a sample" of the final file format.
+    # Therefore, it must describe a valid full-length (60s+) video with at least 3 gags,
+    # despite slice.html being a 10s tracer slice.
     if not kit.exists("slice.html") or not kit.exists("manifest.md"): return False
+    if not kit.no_placeholders("manifest.md"): return False
+
     content = kit.text("manifest.md")
     import json
     import re
@@ -15,7 +20,25 @@ def check_manifest():
         data = json.loads(match.group(1))
         keys = ["version", "characters", "gag_count", "estimated_duration", "cutaway_timestamps"]
         if not all(k in data for k in keys): return False
-        if int(data.get("gag_count", 0)) < 3: return False
+        
+        chars = data.get("characters", [])
+        if not isinstance(chars, list) or len(chars) == 0: return False
+        for c in chars:
+            if not isinstance(c, dict): return False
+            if "pitch" not in c or "rate" not in c or "color" not in c: return False
+            if not str(c.get("color", "")).startswith("#"): return False
+
+        gag_count = int(data.get("gag_count", 0))
+        if gag_count < 3: return False
+        ts = data.get("cutaway_timestamps", [])
+        if not isinstance(ts, list) or len(ts) != gag_count: return False
+        dur = str(data.get("estimated_duration", "")).strip().lower()
+        if not dur.endswith("s"): return False
+        try:
+            sec = float(dur.replace("s", ""))
+            if sec < 60 or sec > 115: return False
+        except ValueError:
+            return False
         return True
     except Exception:
         return False
@@ -42,11 +65,16 @@ kit.check("C3", "Enforces 9:16 viewport", check_aspect)
 
 def check_logic():
     if not kit.exists("slice.html"): return False
+    # The actual slice.html must be a ~10s tracer slice with exactly 1 character and 1 line,
+    # even though the manifest.md acts as a sample describing a full 60s+ production.
     prompt = """Analyze this HTML source code for an animated short.
 Does it meet ALL these requirements?
-1. Has logic to synchronize subtitles with TTS output (e.g., onboundary, setTimeout, or syncing DOM text with utterance).
-2. Contains a CSS animation cutaway (a transition or visual switch).
-3. The content is NOT a placeholder or stub (has actual dialogue and distinct visual definitions).
+1. It is a TINY but COMPLETE tracer slice (approx 10 seconds long).
+2. Contains exactly ONE original geometric SVG character.
+3. The character speaks exactly ONE voiced line using speechSynthesis.
+4. Has logic to synchronize subtitles with the TTS output.
+5. Contains exactly ONE CSS animation cutaway.
+6. The content is NOT a placeholder or stub (has actual dialogue and distinct visual definitions).
 Answer strictly YES or NO."""
     ans = generate("gemini-3.5-flash", [prompt, kit.text("slice.html")]).text
     return isinstance(ans, str) and "YES" in ans.upper()

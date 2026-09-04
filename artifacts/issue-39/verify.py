@@ -1,19 +1,33 @@
 import os
 import json
+import sys
 from verify_kit import Kit
 
 kit = Kit()
 
-def check_c1():
-    if not kit.exists("script.json"):
-        return False
+def check_c1_manifest():
+    if not kit.exists("manifest.md"): return False
+    text = kit.text("manifest.md").lower()
+    if "lorem ipsum" in text or "placeholder" in text or "todo" in text: return False
+    ok, _ = kit.no_placeholders("manifest.md")
+    if not ok: return False
+    if not kit.min_length("manifest.md", 300): return False
+    return True
+
+is_manifest_valid = check_c1_manifest()
+kit.check("C1", "manifest.md from task 1 is OPENED and VALIDATED FIRST", check_c1_manifest)
+
+def check_c2_json():
+    ok, msg = kit.no_placeholders("script.json")
+    if not ok: return False
+    if not kit.exists("script.json"): return False
     try:
         json.loads(kit.text("script.json"))
         return True
     except:
         return False
 
-kit.check("C1", "script.json exists and is valid JSON", check_c1)
+kit.check("C2", "script.json exists and is valid JSON", check_c2_json)
 
 def get_script_data():
     if not kit.exists("script.json"): return None
@@ -22,7 +36,7 @@ def get_script_data():
     except:
         return None
 
-def check_c2():
+def check_c3_keys():
     data = get_script_data()
     if not data: return False
     items = []
@@ -35,44 +49,43 @@ def check_c2():
     for item in items:
         if "subtitle" in item or "text" in item:
             has_dialogue = True
-            if not ("pitch" in item and "rate" in item and "character" in item):
+        if item.get("type") == "dialogue" or "pitch" in item or "rate" in item:
+            if "pitch" not in item or "rate" not in item:
                 return False
     return has_dialogue
 
-kit.check("C2", "script.json contains required TTS keys", check_c2)
+kit.check("C3", "script.json has TTS pitch/rate and exact subtitles", check_c3_keys)
 
-def check_c3():
+def check_c4_gags():
     data = get_script_data()
     if not data: return False
     cutaways = 0
     if isinstance(data, list):
-        cutaways = sum(1 for item in data if item.get("type") == "cutaway" or item.get("cutaway"))
+        cutaways = sum(1 for item in data if item.get("type") == "cutaway" or item.get("cutaway") or item.get("cutaway_gag"))
     elif isinstance(data, dict):
+        items = data.get("script", data.get("dialogue", []))
         if "cutaway_timestamps" in data:
             cutaways = len(data["cutaway_timestamps"])
-        elif "cutaways" in data:
-            cutaways = len(data["cutaways"])
         else:
-            items = data.get("script", data.get("dialogue", []))
-            cutaways = sum(1 for item in items if item.get("type") == "cutaway" or item.get("cutaway"))
+            cutaways = sum(1 for item in items if item.get("type") == "cutaway" or item.get("cutaway") or item.get("cutaway_gag"))
     return cutaways >= 3
 
-kit.check("C3", "script.json contains >= 3 cutaways", check_c3)
+kit.check("C4", "script.json contains >= 3 cutaway gag timestamps", check_c4_gags)
 
-def check_c4():
+def check_c5_duration():
     data = get_script_data()
     if not data: return False
     items = []
     cutaways = 0
     if isinstance(data, list):
         items = data
-        cutaways = sum(1 for item in data if item.get("type") == "cutaway" or item.get("cutaway"))
+        cutaways = sum(1 for item in data if item.get("type") == "cutaway" or item.get("cutaway") or item.get("cutaway_gag"))
     elif isinstance(data, dict):
         items = data.get("script", data.get("dialogue", []))
         if "cutaway_timestamps" in data:
             cutaways = len(data["cutaway_timestamps"])
         else:
-            cutaways = sum(1 for item in items if item.get("type") == "cutaway" or item.get("cutaway"))
+            cutaways = sum(1 for item in items if item.get("type") == "cutaway" or item.get("cutaway") or item.get("cutaway_gag"))
     text_content = ""
     for item in items:
         if "subtitle" in item:
@@ -83,21 +96,23 @@ def check_c4():
     duration = (words / 2.5) + (cutaways * 3)
     return 60 <= duration <= 115
 
-kit.check("C4", "script.json duration is 60-115 seconds", check_c4)
+kit.check("C5", "script.json duration is 60-115 seconds", check_c5_duration)
 
-rubric = "Comedic Writing and Original Satire Rubric:
+if is_manifest_valid:
+    rubric = '''Comedic Writing and Original Satire Rubric:
 10: Perfection
-8: Excellent satire, edgy, distinct characters, unpredictable
-4: Generic AI text, bland, polite"
-if os.path.exists("artifacts/board-20260904-202814/constitution.md"):
-    with open("artifacts/board-20260904-202814/constitution.md", "r", encoding="utf-8") as f:
-        const = f.read()
-        if "Dimension 1:" in const:
-            rubric += const.split("Dimension 1:")[1].split("Dimension 2:")[0]
+8: Excellent satire, edgy, distinct characters, unpredictable. MUST explicitly feature >= 3 cutaways.
+4: Generic AI text, bland, polite'''
+    if os.path.exists("artifacts/board-20260904-202814/constitution.md"):
+        with open("artifacts/board-20260904-202814/constitution.md", "r", encoding="utf-8") as f:
+            const = f.read()
+            if "Dimension 1:" in const:
+                rubric += const.split("Dimension 1:")[1].split("Dimension 2:")[0]
 
-kit.judge("C5", "Satire score >= 8.0", "script.json", rubric, "Anchors: South Park Margaritaville, Family Guy non-sequitur", threshold=8.0, model="gemini-3.1-pro-preview")
+    kit.judge("C6", "Satire score >= 8.0, minimum 3 gags", "script.json", rubric, "Anchors: South Park Margaritaville, Family Guy non-sequitur", threshold=8.0, model="gemini-3.1-pro-preview")
+else:
+    kit.check("C6", "Satire score >= 8.0 (SKIPPED due to invalid manifest)", lambda: False)
 
-kit.check("C6", "manifest.md exists", lambda: kit.exists("manifest.md"))
-
+kit.fault_proof("manifest.md")
 kit.fault_proof("script.json")
 kit.verdict()

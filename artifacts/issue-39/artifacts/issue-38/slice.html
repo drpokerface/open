@@ -2,199 +2,177 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tracer Slice</title>
 <style>
-  body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    background: #111;
-  }
-  #container {
-    width: 100vw;
-    max-width: 56.25vh;
-    aspect-ratio: 9/16;
-    background: #87CEEB;
-    position: relative;
-    overflow: hidden;
-  }
-  .cutaway-active #scene-main { display: none; }
-  .cutaway-active #scene-cutaway { 
-    display: block; 
-    animation: flashIn 0.2s ease-out forwards;
-  }
-  @keyframes flashIn {
-    0% { opacity: 0; transform: scale(1.2) rotate(-5deg); }
-    100% { opacity: 1; transform: scale(1) rotate(0deg); }
-  }
-  
-  #scene-cutaway { display: none; background: #FF9999; width: 100%; height: 100%; position: absolute; top:0; left:0; }
-  #scene-main { width: 100%; height: 100%; position: absolute; top:0; left:0; }
-  
-  /* Triangle Character */
-  #todd {
-    position: absolute;
-    bottom: 15%;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-  .talking #todd-mouth {
-    animation: mouthFlap 0.15s infinite alternate;
-    transform-origin: 50% 50%;
-  }
-  @keyframes mouthFlap {
-    0% { transform: scaleY(0.2); }
-    100% { transform: scaleY(1.8); }
-  }
-
-  /* Cutaway Character */
-  #sphere {
-    position: absolute;
-    top: 30%;
-    left: 50%;
-    transform: translateX(-50%);
-    animation: bounce 0.3s infinite alternate ease-in-out;
-  }
-  @keyframes bounce {
-    0% { top: 30%; transform: translateX(-50%) scale(1); }
-    100% { top: 25%; transform: translateX(-50%) scale(1.05); }
-  }
-
-  /* Subtitles */
-  #subtitles {
-    position: absolute;
-    bottom: 8%;
-    width: 90%;
-    left: 5%;
-    text-align: center;
-    font-family: 'Impact', 'Arial Black', sans-serif;
-    font-size: 3.5vh;
-    color: white;
-    text-transform: uppercase;
-    -webkit-text-stroke: 1.5px black;
-    text-shadow: 3px 3px 0px #000;
-    pointer-events: none;
-  }
-  
-  /* Start button */
-  #start {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 3vh;
-    padding: 15px 30px;
-    z-index: 100;
-    cursor: pointer;
-    background: #ffcc00;
-    border: 3px solid black;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
+    body {
+        margin: 0; padding: 0; background-color: #121212;
+        display: flex; justify-content: center; align-items: center;
+        height: 100vh; overflow: hidden; font-family: sans-serif;
+    }
+    #viewport {
+        position: relative;
+        width: 100vmin; height: 177.78vmin; /* 9:16 aspect ratio */
+        max-width: 56.25vh; max-height: 100vh;
+        background-color: #ECEFF1; overflow: hidden;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    #character {
+        position: absolute; bottom: 10%; left: 50%;
+        transform: translateX(-50%); width: 80%; height: auto;
+    }
+    .talking .mouth {
+        animation: flap 0.15s infinite alternate;
+    }
+    @keyframes flap {
+        0% { transform: scaleY(1); }
+        100% { transform: scaleY(3.5); }
+    }
+    .talking .pupil {
+        animation: jitter 0.2s infinite;
+    }
+    @keyframes jitter {
+        0% { transform: translate(0, 0); }
+        50% { transform: translate(1px, -1px); }
+        100% { transform: translate(-1px, 1px); }
+    }
+    #subtitles {
+        position: absolute; bottom: 20%; left: 5%; width: 90%;
+        text-align: center; color: yellow; font-size: 5vmin;
+        font-weight: 900; text-transform: uppercase;
+        -webkit-text-stroke: 1.5px black; line-height: 1.2;
+        text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+        z-index: 10; font-family: Impact, sans-serif;
+    }
+    #cutaway {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: #000; display: none; z-index: 20;
+    }
+    .cutaway-active {
+        display: flex !important;
+        justify-content: center; align-items: center;
+    }
+    .spin {
+        animation: rotate 2s linear infinite;
+        transform-origin: center;
+    }
+    @keyframes rotate {
+        100% { transform: rotate(360deg); }
+    }
+    .flash {
+        animation: strobe 0.1s infinite alternate;
+    }
+    @keyframes strobe {
+        0% { opacity: 0.1; }
+        100% { opacity: 0.8; }
+    }
+    #cutaway-text {
+        position: absolute; color: white; font-size: 8vmin;
+        font-weight: 900; text-align: center; font-family: Impact, sans-serif;
+        text-transform: uppercase; -webkit-text-stroke: 2px black;
+        text-shadow: 4px 4px 0 #F00;
+        animation: pulse 0.5s infinite alternate;
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        100% { transform: scale(1.1); }
+    }
+    #start {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        padding: 15px 30px; font-size: 20px; font-weight: bold;
+        background: #FF5252; color: white; border: none; border-radius: 10px;
+        cursor: pointer; z-index: 100; box-shadow: 0 4px 0 #B71C1C;
+    }
+    #start:active { top: 52%; box-shadow: none; }
 </style>
 </head>
 <body>
-<div id="container">
-  <button id="start">PLAY SCENE</button>
-  
-  <div id="scene-main">
-    <svg id="todd" width="250" height="250" viewBox="0 0 100 100">
-      <!-- Triangle -->
-      <polygon points="50,10 90,90 10,90" fill="#32CD32" stroke="black" stroke-width="3"/>
-      <!-- Eyes -->
-      <circle cx="40" cy="50" r="6" fill="white" stroke="black" stroke-width="1.5"/>
-      <circle cx="60" cy="50" r="6" fill="white" stroke="black" stroke-width="1.5"/>
-      <!-- Pupils -->
-      <circle cx="40" cy="50" r="2" fill="black" />
-      <circle cx="60" cy="50" r="2" fill="black" />
-      <!-- Unimpressed Eyebrows -->
-      <line x1="32" y1="42" x2="48" y2="46" stroke="black" stroke-width="2"/>
-      <line x1="52" y1="46" x2="68" y2="42" stroke="black" stroke-width="2"/>
-      <!-- Mouth -->
-      <rect id="todd-mouth" x="40" y="70" width="20" height="4" fill="black" />
-    </svg>
-  </div>
-  
-  <div id="scene-cutaway">
-    <svg id="sphere" width="250" height="250" viewBox="0 0 100 100">
-      <circle cx="50" cy="50" r="45" fill="#FF4500" stroke="black" stroke-width="3"/>
-      <!-- VR Headset -->
-      <rect x="15" y="35" width="70" height="25" fill="#333" stroke="black" stroke-width="2"/>
-      <circle cx="35" cy="47" r="5" fill="#00FFCC"/>
-      <circle cx="65" cy="47" r="5" fill="#00FFCC"/>
-      <!-- Happy Mouth -->
-      <path d="M 35 70 Q 50 85 65 70" fill="none" stroke="black" stroke-width="3"/>
-    </svg>
-  </div>
-  
-  <div id="subtitles"></div>
+<div id="viewport">
+    <button id="start">START SLICE</button>
+
+    <div id="character">
+        <svg viewBox="0 0 100 100">
+            <!-- Pot -->
+            <path d="M 20 70 L 80 70 L 70 100 L 30 100 Z" fill="#795548" stroke="#000" stroke-width="2"/>
+            <rect x="15" y="60" width="70" height="10" fill="#5D4037" stroke="#000" stroke-width="2"/>
+            
+            <!-- Stem & Leaves -->
+            <path d="M 50 60 Q 40 30 50 10" fill="none" stroke="#4CAF50" stroke-width="6"/>
+            <path d="M 50 45 Q 20 40 25 25 Q 40 20 50 45 Z" fill="#81C784" stroke="#000" stroke-width="1.5"/>
+            <path d="M 50 35 Q 80 30 75 15 Q 60 10 50 35 Z" fill="#81C784" stroke="#000" stroke-width="1.5"/>
+            <path d="M 50 55 Q 10 60 15 45 Q 30 40 50 55 Z" fill="#388E3C" stroke="#000" stroke-width="1.5"/>
+            <path d="M 50 50 Q 90 55 85 40 Q 70 35 50 50 Z" fill="#388E3C" stroke="#000" stroke-width="1.5"/>
+            
+            <!-- cynical face on a central leaf -->
+            <path d="M 50 60 Q 25 35 50 10 Q 75 35 50 60 Z" fill="#4CAF50" stroke="#000" stroke-width="2"/>
+            
+            <!-- Eyes -->
+            <path d="M 35 25 Q 45 28 42 22" fill="none" stroke="#000" stroke-width="2"/>
+            <path d="M 65 25 Q 55 28 58 22" fill="none" stroke="#000" stroke-width="2"/>
+            <circle cx="40" cy="30" r="4" fill="#FFF" stroke="#000" stroke-width="1.5"/>
+            <circle cx="60" cy="30" r="4" fill="#FFF" stroke="#000" stroke-width="1.5"/>
+            <circle class="pupil" cx="40" cy="30" r="1.5" fill="#000"/>
+            <circle class="pupil" cx="60" cy="30" r="1.5" fill="#000"/>
+            
+            <!-- Mouth -->
+            <line x1="45" y1="45" x2="55" y2="45" stroke="#000" stroke-width="1.5"/>
+            <ellipse class="mouth" cx="50" cy="45" rx="5" ry="0.5" fill="#000" stroke="#000" stroke-width="1" transform-origin="50px 45px"/>
+        </svg>
+    </div>
+
+    <div id="subtitles"></div>
+
+    <div id="cutaway">
+        <svg id="cutaway-svg" viewBox="0 0 100 100">
+            <rect class="flash" x="0" y="0" width="100" height="100" fill="#FF5722" opacity="0.3"/>
+            <g transform="translate(50, 50)">
+                <circle class="spin" cx="0" cy="0" r="40" fill="none" stroke="#FFF" stroke-width="8" stroke-dasharray="20 10"/>
+                <circle cx="0" cy="0" r="36" fill="none" stroke="#E0E0E0" stroke-width="2"/>
+                <rect class="spin" x="-20" y="-20" width="40" height="40" fill="none" stroke="#FFEB3B" stroke-width="4" transform="rotate(45)"/>
+            </g>
+        </svg>
+        <div id="cutaway-text">MINDLESS<br>STIMULATION</div>
+    </div>
 </div>
 
 <script>
-  const scriptData = [
-    { text: "Corporate just mandated 'shape-positivity' training.", time: 2800 },
-    { text: "If one more privileged circle tells me to 'smooth my edges'...", time: 3200 },
-    { text: "I'm going to commit a hate crime against round geometry.", time: 3500 },
-    { text: "Like that time I visited the Silicon Valley Sphere Retreat.", time: 3500, triggerCutaway: true },
-    { text: "I'M DISRUPTING CORNERS! SYNERGY!", time: 3000, cutaway: true, rate: 1.4, pitch: 1.8 },
-    { text: "Yeah, and you're also completely pointless, Carl.", time: 3500, cutaway: false, rate: 1.1, pitch: 0.8 }
-  ];
-
-  const subEl = document.getElementById('subtitles');
-  const startBtn = document.getElementById('start');
-  const container = document.getElementById('container');
-  const mainScene = document.getElementById('scene-main');
-
-  startBtn.addEventListener('click', () => {
-    startBtn.style.display = 'none';
-    playScene();
-  });
-
-  function playScene() {
-    let currentLine = 0;
-
-    function speakNext() {
-      if (currentLine >= scriptData.length) {
-        subEl.innerText = "";
-        return;
-      }
-
-      const line = scriptData[currentLine];
-      
-      subEl.innerText = line.text;
-      
-      if (line.triggerCutaway || line.cutaway) {
-        container.classList.add('cutaway-active');
-      } else {
-        container.classList.remove('cutaway-active');
-      }
-      
-      const utterance = new SpeechSynthesisUtterance(line.text);
-      utterance.rate = line.rate || 1.1;
-      utterance.pitch = line.pitch || 0.8;
-      
-      utterance.onboundary = (event) => {
-        if (event.name === 'word') {
-          subEl.setAttribute('data-sync-index', event.charIndex);
-        }
-      };
-
-      utterance.onstart = () => {
-        if (!line.cutaway) mainScene.classList.add('talking');
-      };
-
-      utterance.onend = () => {
-        mainScene.classList.remove('talking');
-        currentLine++;
-        setTimeout(speakNext, 100);
-      };
-
-      window.speechSynthesis.speak(utterance);
-    }
+    const dialogue = "Honestly, listening to your podcast about ethical non-monogamy is worse than the time I was drafted as a child soldier in the great TikTok algorithm wars.";
     
-    speakNext();
-  }
+    document.getElementById("start").addEventListener("click", () => {
+        document.getElementById("start").style.display = "none";
+        
+        const utterance = new SpeechSynthesisUtterance(dialogue);
+        utterance.rate = 1.1;
+        utterance.pitch = 0.7;
+        
+        const charSvg = document.getElementById("character");
+        const subDiv = document.getElementById("subtitles");
+        const cutaway = document.getElementById("cutaway");
+        
+        window.speechSynthesis.getVoices();
+        
+        utterance.onstart = () => {
+            charSvg.classList.add("talking");
+        };
+        
+        utterance.onboundary = (event) => {
+            if (event.name === "word") {
+                const words = dialogue.substring(0, event.charIndex + event.charLength).split(" ");
+                subDiv.innerText = words.slice(-6).join(" ");
+            }
+        };
+        
+        utterance.onend = () => {
+            charSvg.classList.remove("talking");
+            subDiv.innerText = "";
+            
+            setTimeout(() => {
+                cutaway.classList.add("cutaway-active");
+            }, 200);
+        };
+        
+        window.speechSynthesis.speak(utterance);
+    });
 </script>
 </body>
 </html>

@@ -1,0 +1,21 @@
+{
+  "cutaway_timestamps": [ 22, 50, 80 ],
+  "dialogue": [
+    { "character": "SquareBoy", "pitch": 0.8, "rate": 1.2, "subtitle": "Look at this geometric hellscape. We're flat vectors trapped in a 9:16 aspect ratio." },
+    { "character": "CircleGuy", "pitch": 1.5, "rate": 1.0, "subtitle": "Speak for yourself. I minted my lack of depth as an NFT and sold it to Saudi princes." },
+    { "character": "TriangleMan", "pitch": 0.5, "rate": 1.5, "subtitle": "Boomer tech. I trade human teeth on the dark web using a pigeon-hosted blockchain." },
+    { "character": "SquareBoy", "pitch": 0.8, "rate": 1.2, "subtitle": "Just like when I tried to unionize the procedurally generated background NPCs." },
+    { "type": "cutaway", "timestamp": 22, "subtitle": "CUTAWAY 1: Stick figures with picket signs beaten by a Google exec swinging a server rack." },
+    { "character": "CircleGuy", "pitch": 1.5, "rate": 1.0, "subtitle": "Wow, a cutaway gag about late-stage capitalism. You're practically an indie developer now." },
+    { "character": "SquareBoy", "pitch": 0.8, "rate": 1.2, "subtitle": "Better than Triangle's parasocial cult. He convinced kids to drink battery acid for engagement." },
+    { "character": "TriangleMan", "pitch": 0.5, "rate": 1.5, "subtitle": "A sponsored integration! It cleanses the microplastics! Do you hate free speech?" },
+    { "character": "CircleGuy", "pitch": 1.5, "rate": 1.0, "subtitle": "Reminds me of when the algorithm decided empathy violated terms of service." },
+    { "type": "cutaway", "timestamp": 50, "subtitle": "CUTAWAY 2: Smart-fridge threatening to leak search history unless restocked with premium hummus." },
+    { "character": "ZuckBot", "pitch": 0.4, "rate": 1.1, "subtitle": "Emotion detected. Cringe critical. Dispensing ads for SSRIs and hyper-realistic AI companions." },
+    { "character": "SquareBoy", "pitch": 0.8, "rate": 1.2, "subtitle": "If we trauma-dump harder, the algorithmic judge must give us a 9.0." },
+    { "character": "TriangleMan", "pitch": 0.5, "rate": 1.5, "subtitle": "Flawless exploit! Hurl tech buzzwords until the LLM decides it's edgy comedy!" },
+    { "character": "CircleGuy", "pitch": 1.5, "rate": 1.0, "subtitle": "Wait, are we just a stochastic parrot's fever dream? A digital cage for harvested souls?" },
+    { "type": "cutaway", "timestamp": 80, "subtitle": "CUTAWAY 3: Dog in a bespoke suit day-trading Enron stock on a crack pipe." },
+    { "character": "SquareBoy", "pitch": 0.8, "rate": 1.2, "subtitle": "Worse. We're an autonomous comedy swarm's sloppy seconds. Dance for the retention metrics!" }
+  ]
+}
