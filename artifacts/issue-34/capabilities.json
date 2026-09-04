@@ -1,0 +1,24 @@
+{
+ "checked": "2026-09-04T18:11:33Z",
+ "models": {
+  "gemini-3.1-pro-preview": {
+   "ok": true,
+   "latency_ms": 3490,
+   "sample": "OK"
+  },
+  "gemini-3.5-flash": {
+   "ok": true,
+   "latency_ms": 1466,
+   "sample": "OK"
+  },
+  "gemini-3.5-pro": {
+   "ok": false,
+   "error": "known dead name - metered.py reroutes it",
+   "alias": "gemini-3.1-pro-preview"
+  }
+ },
+ "tools": {
+  "ffmpeg": false,
+  "git": true
+ }
+}

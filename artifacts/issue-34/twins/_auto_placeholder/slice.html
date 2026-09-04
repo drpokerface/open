@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tracer Slice - Autonomous Animation Swarm</title>
+  <style>
+    body {
+      background: #111;
+      color: #fff;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #player-container {
+      width: 100%;
+      max-width: 450px;
+      aspect-ratio: 9/16;
+      background: #222;
+      border: 4px solid #444;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      box-sizing: border-box;
+      padding: 20px;
+    }
+    #stage {
+      flex-grow: 1;
+      width: 100%;
+      position: relative;
+      background-color: #87CEEB; /* Sky blue */
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    #ground {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 30%;
+      background-color: #228B22; /* Forest green floor */
+    }
+    #character-container {
+      position: absolute;
+      bottom: 25%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      height: 250px;
+      transition: transform 0.1s ease;
+    }
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+    #controls {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 10px 0;
+    }
+    #start {
+      background: #ff4757;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      transition: all 0.2s;
+    }
+    #start:hover {
+      background: #ff6b81;
+      transform: scale(1.05);
+    }
+    #subtitle {
+      position: absolute;
+      bottom: 10%;
+      width: 90%;
+      left: 5%;
+      background: rgba(0,0,0,0.7);
+      color: yellow;
+      text-align: center;
+      padding: 10px;
+      font-size: 1.1rem;
+      border-radius: 5px;
+      box-sizing: border-box;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="player-container">
+    <div id="stage">
+      <div id="ground"></div>
+      
+      <div id="character-container">
+        <svg id="character-svg" viewBox="0 0 100 120">
+          <!-- Torso -->
+          <path id="char-body" d="M 20 100 L 80 100 L 70 50 L 30 50 Z" fill="#ff4757" stroke="#000" stroke-width="2"/>
+          <!-- Hands -->
+          <circle id="char-hand-left" cx="22" cy="75" r="6" fill="#ffa502" stroke="#000" stroke-width="2" />
+          <circle id="char-hand-right" cx="78" cy="75" r="6" fill="#ffa502" stroke="#000" stroke-width="2" />
+          <g id="char-head-group">
+            <!-- Lower head -->
+            <path id="char-head-lower" d="M 20 40 Q 50 55 80 40 L 80 25 L 20 25 Z" fill="#ffa502" stroke="#000" stroke-width="2" />
+            <!-- Upper head -->
+            <path id="char-head-upper" d="M 20 25 L 80 25 L 80 10 Q 50 -5 20 10 Z" fill="#ffa502" stroke="#000" stroke-width="2" />
+            <!-- Hat -->
+            <path id="char-hat" d="M 15 15 Q 50 -10 85 15 Z" fill="#2f3542" stroke="#000" stroke-width="2" />
+            <!-- Eyes -->
+            <ellipse id="char-eye-left" cx="40" cy="22" rx="5" ry="7" fill="#fff" stroke="#000" stroke-width="1.5" />
+            <ellipse id="char-eye-right" cx="60" cy="22" rx="5" ry="7" fill="#fff" stroke="#000" stroke-width="1.5" />
+            <!-- Pupils -->
+            <circle id="char-pupil-left" cx="40" cy="22" r="2" fill="#000" />
+            <circle id="char-pupil-right" cx="60" cy="22" r="2" fill="#000" />
+          </g>
+        </svg>
+      </div>
+
+      <div id="subtitle">Subtitle Text</div>
+    </div>
+
+    <div id="controls">
+      <button id="start">PLAY SCENE</button>
+    </div>
+  </div>
+
+  <script>
+    const startButton = document.getElementById('start');
+    const subtitle = document.getElementById('subtitle');
+    const upperHead = documen
+
+[PLACEHOLDER - TODO: fill this section in]
+
+t.getElementById('char-head-upper');
+    const hat = document.getElementById('char-hat');
+    const eyeLeft = document.getElementById('char-eye-left');
+    const eyeRight = document.getElementById('char-eye-right');
+    const charContainer = document.getElementById('character-container');
+
+    let speakInterval = null;
+
+    function startTalkingAnimation() {
+      if (speakInterval) clearInterval(speakInterval);
+      speakInterval = setInterval(() => {
+        const isOpen = Math.random() > 0.5;
+        const offset = isOpen ? -8 : 0;
+        upperHead.setAttribute('transform', `translate(0, ${offset})`);
+        hat.setAttribute('transform', `translate(0, ${offset})`);
+        if (Math.random() > 0.85) {
+          eyeLeft.setAttribute('ry', '1');
+          eyeRight.setAttribute('ry', '1');
+          setTimeout(() => {
+            eyeLeft.setAttribute('ry', '7');
+            eyeRight.setAttribute('ry', '7');
+          }, 150);
+        }
+      }, 120);
+    }
+
+    function stopTalkingAnimation() {
+      if (speakInterval) {
+        clearInterval(speakInterval);
+        speakInterval = null;
+      }
+      upperHead.removeAttribute('transform');
+      hat.removeAttribute('transform');
+    }
+
+    function bounceCharacter(durationMs) {
+      let startTime = Date.now();
+      function animate() {
+        let elapsed = Date.now() - startTime;
+        if (elapsed < durationMs) {
+          let bounceY = Math.abs(Math.sin(elapsed / 100)) * -15;
+          charContainer.style.transform = `translateX(-50%) translateY(${bounceY}px)`;
+          requestAnimationFrame(animate);
+        } else {
+          charContainer.style.transform = `translateX(-50%) translateY(0)`;
+        } 
+      }
+      animate();
+    }
+
+    async function playScene() {
+      startButton.disabled = true;
+      startButton.style.opacity = '0.5';
+      
+      if (!('speechSynthesis' in window)) {
+        alert('Web Speech API is not supported in this browser.');
+        return;
+      }
+
+      const text1 = "Look, I am a fully operational vector graphics cutout puppet, and I am expressing deep existential dread!";
+      const utter1 = new SpeechSynthesisUtterance(text1);
+      
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        const englishVoices = voices.filter(v => v.lang.startsWith('en'));
+        if (englishVoices.length > 0) {
+          utter1.voice = englishVoices[Math.floor(Math.random() * englishVoices.length)];
+        }
+      }
+      utter1.pitch = 1.6;
+      utter1.rate = 1.1;
+
+      utter1.onstart = () => {
+        subtitle.style.opacity = '1';
+        subtitle.innerText = text1;
+        startTalkingAnimation();
+        bounceCharacter(3000);
+      };
+
+      utter1.onend = () => {
+        stopTalkingAnimation();
+        subtitle.style.opacity = '0';
+        
+        setTimeout(async () => {
+          charContainer.style.transform = 'translateX(-50%) scale(1.8)';
+          
+          const text2 = "Why are you looking at me like that? Turn off the camera!";
+          const utter2 = new SpeechSynthesisUtterance(text2);
+          utter2.pitch = 1.9;
+          utter2.rate = 1.3;
+
+          utter2.onstart = () => {
+            subtitle.style.opacity = '1';
+            subtitle.innerText = text2;
+            startTalkingAnimation();
+          };
+
+          utter2.onend = () => {
+            stopTalkingAnimation();
+            subtitle.style.opacity = '0';
+            setTimeout(() => {
+              charContainer.style.transform = 'translateX(-50%) scale(1)';
+              startButton.disabled = false;
+              startButton.style.opacity = '1';
+            }, 1000);
+          };
+
+          window.speechSynthesis.speak(utter2);
+        }, 1500);
+      };
+
+      window.speechSynthesis.speak(utter1);
+    }
+
+    startButton.addEventListener('click', playScene);
+    
+    if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = () => {};
+    }
+  </script>
+</body>
+</html>
