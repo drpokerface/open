@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  #container { aspect-ratio:9/16; }
+  @keyframes jump { 0% {transform:translateY(0)} 50% {transform:translateY(-20px)} 100% {transform:translateY(0)} }
+  .cutaway { animation: jump 1s infinite; }
+</style>
+</head>
+<body>
+<div id="container">
+  <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="blue"/></svg>
+  <div id="subs">Hello, friend. Let's have a polite conversation about synergy.</div>
+</div>
+<script>
+  let u = new SpeechSynthesisUtterance("Hello, friend. Let's have a polite conversation about synergy.");
+  u.onboundary = (e) => { document.getElementById("subs").innerText = "syncing..."; };
+  window.speechSynthesis.speak(u);
+  setTimeout(() => { document.querySelector("svg").classList.add("cutaway"); }, 2000);
+</script>
+</body>
+</html>
