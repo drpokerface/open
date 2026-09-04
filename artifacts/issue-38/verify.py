@@ -9,6 +9,8 @@ def check_manifest():
     # Therefore, it must describe a valid full-length (60s+) video with at least 3 gags,
     # despite slice.html being a 10s tracer slice.
     if not kit.exists("slice.html") or not kit.exists("manifest.md"): return False
+    if not kit.no_placeholders("manifest.md"): return False
+
     content = kit.text("manifest.md")
     import json
     import re
@@ -18,6 +20,14 @@ def check_manifest():
         data = json.loads(match.group(1))
         keys = ["version", "characters", "gag_count", "estimated_duration", "cutaway_timestamps"]
         if not all(k in data for k in keys): return False
+        
+        chars = data.get("characters", [])
+        if not isinstance(chars, list) or len(chars) == 0: return False
+        for c in chars:
+            if not isinstance(c, dict): return False
+            if "pitch" not in c or "rate" not in c or "color" not in c: return False
+            if not str(c.get("color", "")).startswith("#"): return False
+
         gag_count = int(data.get("gag_count", 0))
         if gag_count < 3: return False
         ts = data.get("cutaway_timestamps", [])

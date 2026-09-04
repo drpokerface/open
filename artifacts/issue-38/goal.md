@@ -9,6 +9,10 @@ Already provided in your working directory: artifacts/board-20260904-202814/cons
 SWARM CHANNEL: you are working issue #38 of the GitHub repo drpokerface/open (token in GITHUB_TOKEN env). If you discover work this plan is missing, you may post ONE comment on your own issue via the API starting exactly 'PROPOSE-TASK: ' (state: title, why, which existing deliverable it unblocks, what it produces). Facing an irreversible, genuinely ambiguous choice, you may post ONE comment starting exactly 'QUESTION: ', then continue on the reversible path without waiting. If a PROVIDED input artifact fails your validation (placeholder, degenerate, or broken contract), post ONE comment starting exactly 'INPUT-REJECT: #<producing issue number> ' plus one line of evidence - the swarm will reopen that task; then declare impossible honestly instead of building on garbage. If providers.md lacks an adequate tool for a capability this task needs, you may post ONE comment starting exactly 'PROPOSE-PROVIDER: ' (capability, best candidate service, pricing, what it unlocks) - the owner decides about subscribing; continue meanwhile on the best reachable tier. Never create issues yourself; an owner-side arbiter reviews and answers as an 'ARBITER re' comment on this issue.
 
 LAST VERIFICATION FAILURE (repair this first):
-VERIFY: FAIL by consumer-veto from issue #39
-its consumer rejected this artifact as unusable:
-manifest.md contains placeholder/stub values (gag_count 3 but only one cutaway timestamp, estimated_duration 10s).
+VERIFY: FAIL by worker-1 (drpokerface)
+its own RESULT reports the gate was not passed - sent back for retry, not closed.
+gate: NOT passed (ran out of turns, budget, or rejections)
+why: Stopping: the gate rejected the work 5 times.
+last gate rejection: rejection 5/5:
+a hostile audit rejected the claim (votes: gemini-3.5-flash=APPROVE, gemini-3.5-flash=APPROVE, gemini-3.1-pro-preview=REJECT):
+[gemini-3.1-pro-preview] The verification script completely fails to validate the required structure of the `characters` field in `manifest.md`. The specification strictly mandates that `characters` must be "a list of original characters with their assigned TTS pitch/rate values and SVG hex color codes". However, `check_manifest()` only checks `if "characters" in data`, ignoring its type and contents. Furthermore, because `verify.py` fails to call `kit.no_placeholders("manifest.md")`, a lazy author can trivially pass the manifest check by outputting stub values such as `"characters": "TODO"`, `"characters": []`, or `"

@@ -3820,3 +3820,77 @@ PROGRESS: no - you already read manifest.md at this exact content (turn 21); STA
 ## Turn 31 - DONE claimed (automatic: the real artifact passes and every twin fails)
 a hostile audit rejected the claim (votes: gemini-3.5-flash=APPROVE, gemini-3.5-flash=APPROVE, gemini-3.1-pro-preview=REJECT):
 [gemini-3.1-pro-preview] The verification script completely fails to validate the required structure of the `characters` field in `manifest.md`. The specification strictly mandates that `characters` must be "a list of original characters with their assigned TTS pitch/rate values and SVG hex color codes". However, `check_manifest()` only checks `if "characters" in data`, ignoring its type and contents. Furthermore, because `verify.py` fails to call `kit.no_placeholders("manifest.md")`, a lazy author can trivially pass the manifest check by outputting stub values such as `"characters": "TODO"`, `"characters": []`, or `"
+
+## Seed born
+goal: Tracer Slice and Capability Probe
+
+HARDEST FIRST: Identify the plan's riskiest assumption - that we can build a synchronized pure HTML JS window.speechSynthesis and CSS animation loop that reliably plays a scene and updates subtitles without external video or audio APIs. PROBE for the strongest gene
+
+## Turn 1 (gemini-3.1-pro-preview)
+THOUGHT: The auditor rejected because `verify.py` does not adequately validate the `characters` list in `manifest.md` and misses `kit.no_placeholders("manifest.md")`. I need to inspect the current source of `verify.py` to fix this exact bug.
+CODE:
+# read_file verify.py ? What is the implementation of check_manifest() and how does it validate manifest.md?
+OUTPUT (exit 0):
+--- verify.py (4872 bytes, sha 58b55cc7) complete, verbatim ---
+import os
+from verify_kit import Kit
+from metered import generate
+
+kit = Kit()
+
+def check_manifest():
+    # As per the goal, manifest.md provides "a sample" of the final file format.
+    # Therefore, it must describe a valid full-length (60s+) video with at least 3 gags,
+    # despite slice.html being a 10s tracer slice.
+    if not kit.exists("slice.html") or not kit.exists("manifest.md"): return False
+    content = kit.text("manifest.md")
+    import json
+    import re
+    match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', content, re.DOTALL)
+    if not match: return False
+    try:
+        data = json.loads(match.group(1))
+        keys = ["version", "characters", "gag_count", "estimated_duration", "cutaway_timestamps"]
+        if not all(k in data for k in keys): return False
+        gag_count = int(data.get("gag_count", 0))
+        if gag_count < 3: return False
+        ts = data.get("cutaway_timestamps", [])
+        if not isinstance(ts, list) or len(ts) != gag_count: return False
+        dur = str(data.get("estimated_duration", "")).strip().lower()
+        if not dur.endswith("s"): return False
+        try:
+            sec = float(dur.replace("s", ""))
+            if sec < 60 or sec > 115: return False
+        except ValueError:
+            return False
+        return True
+    except Exception:
+        return False
+
+kit.check("C1", "Files exist and manifest valid", check_manifest)
+
+def check_structure():
+    if not kit.exists("slice.html"): return False
+    html = kit.text("slice.html")
+    struct_ok = "<svg" in html and "@keyframes" in html and "speechSynthesis" in html
+    if not struct_ok: return False
+    return kit.no_placeholders("slice.html")
+
+kit.check("C2", "HTML contains SVG, keyframes, and speechSynthesis", check_structure)
+
+def check_aspect():
+    if not kit.exists("slice.html"): return False
+    html = kit.text("slice.html")
+    prompt =
+[...memory keeps 2000 chars - LAST OUTPUT showed all 4936 that turn]
+
+## Turn 2 (gemini-3.1-pro-preview)
+THOUGHT: The auditor rejected verify.py because it failed to validate the structure of the 'characters' list in manifest.md (it requires TTS pitch/rate values and SVG hex color codes) and it missed kit.no_placeholders("manifest.md"), allowing lazy stub values. I am rewriting verify.py to explicitly fix these two exact flaws in the check_manifest() function.
+CODE:
+# write_file verify.py
+OUTPUT (exit 0):
+EXPECT: verify.py written in full
+PROGRESS: yes - wrote verify.py (5191 bytes, sha 40333e65)
+
+## Turn 2 - DONE claimed (automatic: the real artifact passes and every twin fails)
+verify.py ran green in a fresh process, proved it catches an induced fault, failed every degenerate twin, and survived a hostile audit (votes: gemini-3.5-flash=APPROVE, gemini-3.5-flash=APPROVE, gemini-3.1-pro-preview=APPROVE)
