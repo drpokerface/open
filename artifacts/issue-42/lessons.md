@@ -1,3 +1,4 @@
 # lessons.md - every rejection this task has received; the auditor reads this list too
 - [earlier attempt (#5551128767)] VERIFY: FAIL by worker-1 (drpokerface) its own RESULT reports the gate was not passed - sent back for retry, not closed. gate: NOT passed (ran out of turns, budget, or rejections) why: Stopping: reached the maximum number of turns.
 - [earlier attempt (#5551173830)] VERIFY: FAIL by worker-1 (drpokerface) its own RESULT reports the gate was not passed - sent back for retry, not closed. gate: NOT passed (ran out of turns, budget, or rejections) why: Stopping: reached the maximum number of turns.
+- [earlier attempt (#5551235037)] VERIFY: FAIL by worker-1 (drpokerface) its own RESULT reports the gate was not passed - sent back for retry, not closed. gate: NOT passed (ran out of turns, budget, or rejections) why: Stopping: reached the maximum number of turns.
