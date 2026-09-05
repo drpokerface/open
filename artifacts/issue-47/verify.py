@@ -30,7 +30,7 @@ def get_browser():
                 try: os.remove(f)
                 except: pass
         if not text:
-            browser_res_cache[h] = {'speech_before': False, 'speech_after': False, 'images': [], 'logs': [], 'aspect_ratio_ok': False}
+            browser_res_cache[h] = {'speech_before': False, 'speech_after': False, 'images': [], 'logs': [], 'js_errors': [], 'aspect_ratio_ok': False}
             with open("scratch/browser_logs.txt", "w") as f: f.write("")
         else:
             from playwright.sync_api import sync_playwright
@@ -50,7 +50,7 @@ def get_browser():
             thread.daemon = True
             thread.start()
             
-            res = {'speech_before': False, 'speech_after': False, 'images': [], 'logs': [], 'aspect_ratio_ok': False}
+            res = {'speech_before': False, 'speech_after': False, 'images': [], 'logs': [], 'js_errors': [], 'aspect_ratio_ok': False}
             try:
                 with sync_playwright() as p:
                     browser = p.chromium.launch(headless=True)
@@ -81,6 +81,8 @@ def get_browser():
                     page.add_init_script(init_script)
                     
                     logs = []
+                    js_errors = []
+                    page.on("pageerror", lambda e: js_errors.append(e.message))
                     page.on("console", lambda msg: logs.append(msg.text))
                     
                     page.goto(f"http://localhost:{port}/slice.html")
@@ -110,6 +112,7 @@ def get_browser():
                     
                     res['images'] = ["scratch/1_before_click.png", "scratch/2_after_click.png", "scratch/3_after_cut.png"]
                     res['logs'] = logs
+                    res['js_errors'] = js_errors
                     with open("scratch/browser_logs.txt", "w") as f:
                         f.write("\n".join(logs))
                     browser.close()
@@ -131,6 +134,20 @@ def c2():
     if not kit.exists("slice.html"): return False
     if not hasattr(kit, "no_placeholders") or not kit.no_placeholders("slice.html")[0]: return False
     if not kit.text("slice.html").strip().endswith("</html>"): return False
+    
+    # Validate JS runtime syntax
+    if len(get_browser().get('js_errors', [])) > 0: return False
+    
+    # Validate static JS syntax if node is present
+    import subprocess, re
+    scripts = re.findall(r'<script[^>]*>(.*?)</script>', kit.text("slice.html"), re.DOTALL | re.IGNORECASE)
+    for js in scripts:
+        if js.strip():
+            try:
+                r = subprocess.run(["node", "-c", "-e", js], capture_output=True)
+                if r.returncode != 0: return False
+            except Exception: pass
+
     class MP(HTMLParser):
         def handle_error(self, m): raise ValueError(m)
     try:
@@ -145,10 +162,11 @@ def c3():
     if not kit.exists("slice.html"): return False
     if not hasattr(kit, "no_placeholders") or not kit.no_placeholders("slice.html")[0]: return False
     text = kit.text("slice.html")
-    has_script = bool(re.search(r'<script[^>]+src\s*=', text, re.I))
-    has_link = bool(re.search(r'<link[^>]+href\s*=', text, re.I))
-    has_img = bool(re.search(r'<img[^>]+src\s*=\s*["\']http', text, re.I))
-    return not (has_script or has_link or has_img)
+    if re.search(r'<(script|link|iframe|embed|object)[^>]+(src|href)\s*=\s*["'](http|//)', text, re.I): return False
+    if re.search(r'@import\s+url', text, re.I): return False
+    if re.search(r'url\(\s*["']?(http|//)', text, re.I): return False
+    if re.search(r'<img[^>]+src\s*=\s*["'](http|//)', text, re.I): return False
+    return True
 kit.check("C3", "zero external resources", c3)
 
 # C4
@@ -171,14 +189,27 @@ def c7():
     if not kit.exists("slice.html"): return False
     if not hasattr(kit, "no_placeholders") or not kit.no_placeholders("slice.html")[0]: return False
     logs = get_browser().get('logs', [])
-    speech_idx = -1
-    for i, l in enumerate(logs):
-        if ("speechSynthesis triggered SYS_HOOK" in l or "speech start" in l):
-            speech_idx = i
-            break
-    if speech_idx == -1: return False
-    svg_toggles = [l for l in logs[speech_idx:] if "DOM class changed SYS_HOOK" in l and (" ON g" in l or " ON svg" in l or " ON path" in l)]
-    return len(svg_toggles) >= 2
+    events = []
+    for l in logs:
+        if "speech start SYS_HOOK" in l: events.append("speech_start")
+        elif "speech end SYS_HOOK" in l: events.append("speech_end")
+        elif "DOM class changed SYS_HOOK" in l and any(t in l for t in [" ON g", " ON svg", " ON path", " ON polygon"]):
+            events.append("svg_mut")
+    
+    if "speech_start" in events:
+        idx_start = events.index("speech_start")
+        if "speech_end" in events[idx_start:]:
+            idx_end = events.index("speech_end", idx_start)
+            # Must animate DURING speech
+            muts = events[idx_start:idx_end].count("svg_mut")
+            # Must halt animation AFTER speech
+            muts_after = events[idx_end:min(len(events), idx_end+4)].count("svg_mut")
+            
+            if muts >= 1 and muts_after >= 1:
+                return True
+            if muts >= 3:
+                return True
+    return False
 kit.check("C7", "mouth animation synced with speech", c7)
 
 # C8

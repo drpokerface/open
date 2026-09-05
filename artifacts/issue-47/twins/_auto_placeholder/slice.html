@@ -118,16 +118,16 @@
       <path class="body-part" fill="#000" d="M100,150 L100,300" stroke-width="2"/> <!-- zipper -->
       <!-- Arms -->
       <line class="body-part" x1="40" y1="160" x2="10" y2="230" stroke-width="8" stroke-linecap="round"/>
-      <line class="body-part" x1="160"
-
-[PLACEHOLDER - TODO: fill this section in]
-
- y1="160" x2="190" y2="230" stroke-width="8" stroke-linecap="round"/>
+      <line class="body-part" x1="160" y1="160" x2="190" y2="230" stroke-width="8" stroke-linecap="round"/>
       
       <!-- Head Bottom (Mouth base) -->
       <path class="body-part" fill="#FFDAB9" d="M60,150 C60,180 140,180 140,150 Z" />
       <!-- Mouth inside -->
-      <path fill="#000" d="M70,150 C70,165 130,165 130,150 Z" />
+      <p
+
+[PLACEHOLDER - TODO: fill this section in]
+
+ath fill="#000" d="M70,150 C70,165 130,165 130,150 Z" />
 
       <!-- Head Top (Flaps) -->
       <g class="head-top">
@@ -176,6 +176,7 @@
 </div>
 
 <script>
+
   function startExperience() {
     document.getElementById('overlay').style.display = 'none';
     document.getElementById('scene1').style.display = 'flex';
@@ -191,14 +192,17 @@
   }
 
   function playSequence() {
-    const text1 = "Hey! You can't just synthesize a baby from a microwave and a pile of dryer lint!";
-    const text2 = "I'm not a baby, I'm a sentient lint-ball with a mortgage! Now give me your loose change!";
+    const text1 = "I tried to microwave a baby out of dryer lint and expired cough syrup, but it gained sentience! What have I done to the natural order?";
+    const text2 = "I am born of static cling and unpaid debts! I demand a blood sacrifice, a fixed-rate mortgage, and a massive corporate bailout!";
+    const text3 = "Jokes on you, the housing market is already dead! Take this Arby's coupon!";
     
     let u1 = new SpeechSynthesisUtterance(text1);
     let u2 = new SpeechSynthesisUtterance(text2);
+    let u3 = new SpeechSynthesisUtterance(text3);
     
-    u1.rate = 1.1; u1.pitch = 1.2;
-    u2.rate = 0.9; u2.pitch = 0.5;
+    u1.rate = 1.2; u1.pitch = 1.2;
+    u2.rate = 1.0; u2.pitch = 0.4;
+    u3.rate = 1.2; u3.pitch = 1.2;
 
     let char1 = document.getElementById('char1');
     let char2 = document.getElementById('char2');
@@ -213,29 +217,29 @@
       sub1.innerText = '';
       document.getElementById('scene1').style.display = 'none';
       document.getElementById('scene2').style.display = 'flex';
-      
       document.documentElement.classList.add('cut-occurred');
       
       setTimeout(() => {
         window.speechSynthesis.speak(u2);
-        document.documentElement.classList.add('tts-active-2');
         char2.classList.add('is-speaking');
         sub2.innerText = text2;
-      }, 500);
+      }, 300);
     };
 
-    u1.onstart = () => {
-      char1.classList.add('is-speaking');
-      sub1.innerText = text1;
-    };
+    u1.onstart = () => { char1.classList.add('is-speaking'); sub1.innerText = text1; };
     u1.onend = doCut;
 
-    u2.onstart = () => {
-      char2.classList.add('is-speaking');
-      sub2.innerText = text2;
-    };
+    u2.onstart = () => { char2.classList.add('is-speaking'); sub2.innerText = text2; };
     u2.onend = () => {
       char2.classList.remove('is-speaking');
+      sub2.innerText = '';
+      setTimeout(() => {
+        window.speechSynthesis.speak(u3);
+        sub2.innerHTML = '<i>(Off-screen)</i> ' + text3;
+      }, 200);
+    };
+    
+    u3.onend = () => {
       sub2.innerText = "FIN";
     };
 
@@ -245,12 +249,16 @@
     sub1.innerText = text1;
     
     // Safety fallback for headless browsers that might suppress TTS events
-    setTimeout(doCut, 3500);
+    setTimeout(doCut, 4000);
     setTimeout(() => {
         char2.classList.remove('is-speaking');
+        sub2.innerHTML = '<i>(Off-screen)</i> ' + text3;
+    }, 8500);
+    setTimeout(() => {
         sub2.innerText = "FIN";
-    }, 7500);
+    }, 11000);
   }
+
 </script>
 </body>
 </html>

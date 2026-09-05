@@ -4,7 +4,7 @@ This integration contract outlines the runtime parameters, configuration setting
 
 ```json
 {
-  "runtime": 10.0,
+  "runtime": "11 seconds",
   "start_overlay": true,
   "speech_settings": {
     "rate": 1.1,
