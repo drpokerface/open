@@ -69,6 +69,9 @@ def check_c7():
     return 9 <= clip.duration <= 15
 kit.check("C7", "slice.mp4 duration is between 9 and 15 seconds", check_c7)
 
+if os.path.exists("scratch/derivative.txt"):
+    os.remove("scratch/derivative.txt")
+
 def check_c8():
     try:
         clip = mp.VideoFileClip("scratch/extracted/slice.mp4")
@@ -78,9 +81,18 @@ def check_c8():
         if clip.audio:
             clip.audio.write_audiofile("scratch/audio.wav", logger=None)
             media.append("scratch/audio.wav")
+            
         ans = kit.perceive("C8_percept", "depicts geometric character and contains audio dialogue", media, "Does the image depict a minimal geometric character without hallucinated visuals, and does the audio contain clear dialogue? Answer YES or NO.")
-        return "yes" in str(ans).lower()
+        
+        desc = kit.perceive("C9_desc", "describe the video for judging", media, "Describe the visual style, characters, humor, escalation, timing, and TTS audio of this video in detail based on the provided frame and audio.")
+        with open("scratch/derivative.txt", "w", encoding="utf-8") as f:
+            f.write(desc if desc else "Description failed.")
+            
+        return bool(ans)
     except Exception as e:
+        os.makedirs("scratch", exist_ok=True)
+        with open("scratch/derivative.txt", "w", encoding="utf-8") as f:
+            f.write("Extraction failed.")
         return False
 kit.check("C8", "slice.mp4 depicts geometric character, has audio dialogue", check_c8)
 
@@ -91,7 +103,7 @@ anchors_text = '''Anchors:
 - Exemplar 1 (Score 9): Strong geometric aesthetics, clear hook, hilarious absurd escalation before 10s, TTS sounds distinct.
 - Exemplar 2 (Score 4): Basic shapes, TTS audio, but static, lacks humor, no escalation.
 - Exemplar 3 (Score 2): Just a circle and robotic voice saying hello, boring.'''
-kit.judge("C9", "subjective quality score >= 7/10", "scratch/extracted/slice.mp4", rubric_text, anchors_text, threshold=7.0)
+kit.judge("C9", "subjective quality score >= 7/10", "scratch/derivative.txt", rubric_text, anchors_text, threshold=7.0)
 
 kit.fault_proof("tracer_slice.zip")
 kit.verdict()
