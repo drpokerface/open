@@ -60,7 +60,7 @@ def get_browser():
                     init_script = """
                     window.speechSynthesis.speak = (function(orig) {
                         return function(utterance) {
-                            console.log('speechSynthesis triggered');
+                            console.log('speechSynthesis triggered SYS_HOOK');
                             utterance.addEventListener('start', () => console.log('speech start'));
                             utterance.addEventListener('end', () => console.log('speech end'));
                             return orig.apply(this, arguments);
@@ -71,7 +71,7 @@ def get_browser():
                         const observer = new MutationObserver(mutations => {
                             for (let m of mutations) {
                                 if (m.type === 'attributes' && m.attributeName === 'class') {
-                                    console.log('DOM class changed: ' + (m.target.getAttribute('class') || ''));
+                                    console.log('DOM class changed SYS_HOOK: ' + (m.target.getAttribute('class') || '') + ' ON ' + m.target.tagName.toLowerCase());
                                 }
                             }
                         });
@@ -130,6 +130,7 @@ def c2():
     if not kit.min_length("slice.html", 3000): return False
     if not kit.exists("slice.html"): return False
     if not hasattr(kit, "no_placeholders") or not kit.no_placeholders("slice.html")[0]: return False
+    if not kit.text("slice.html").strip().endswith("</html>"): return False
     class MP(HTMLParser):
         def handle_error(self, m): raise ValueError(m)
     try:
@@ -172,11 +173,12 @@ def c7():
     logs = get_browser().get('logs', [])
     speech_idx = -1
     for i, l in enumerate(logs):
-        if "speechSynthesis triggered" in l or "speech start" in l:
+        if ("speechSynthesis triggered SYS_HOOK" in l or "speech start" in l):
             speech_idx = i
             break
     if speech_idx == -1: return False
-    return any("DOM class changed" in l for l in logs[speech_idx:])
+    svg_toggles = [l for l in logs[speech_idx:] if "DOM class changed SYS_HOOK" in l and (" ON g" in l or " ON svg" in l or " ON path" in l)]
+    return len(svg_toggles) >= 2
 kit.check("C7", "mouth animation synced with speech", c7)
 
 # C8
@@ -187,7 +189,11 @@ def c8():
         json_str = re.search(r'```json\s*(\{.*?\})\s*```', text, re.DOTALL)
         if not json_str: return False
         data = json.loads(json_str.group(1))
-        return "runtime" in data and "start_overlay" in data and "speech_settings" in data and "timeline" in data
+        has_rt = "runtime" in data
+        has_so = "start_overlay" in data
+        has_ss = "speech_settings" in data
+        has_tl = "timeline" in data and bool(data["timeline"])
+        return has_rt and has_so and has_ss and has_tl
     except:
         return False
 kit.check("C8", "manifest.md contains valid JSON contract", c8)
@@ -209,7 +215,7 @@ Technical Execution Rubric (0-10):
 7: Functional Web Speech API and simple visuals, but timing is off or autoplay fails.
 9: Perfect zero-dependency execution: 'Tap to Play' works, speech plays, mouth flaps precisely with audio, 9:16 aspect ratio enforced, distinct cut happens.
 """
-kit.judge("C10", "technical execution score >= 8.0/10", ["scratch/1_before_click.png", "scratch/2_after_click.png", "scratch/3_after_cut.png", "scratch/browser_logs.txt"], rubric_c10, "Anchor: 9 is perfect execution as defined.", threshold=8)
+kit.judge("C10", "technical execution score >= 8.0/10", "slice.html", rubric_c10, "Anchor: 9 is perfect execution as defined.", threshold=8)
 
 kit.fault_proof("slice.html")
 kit.verdict()

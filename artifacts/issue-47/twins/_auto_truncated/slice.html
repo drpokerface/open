@@ -2,96 +2,120 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tracer Slice</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tracer Slice - Absurdist Comedy</title>
+<!--
+  TRACER SLICE: HTML5 Web Speech and CSS Animation Probe
+  
+  CONSTITUTION ALIGNMENT & DESIGN PHILOSOPHY:
+  - Unapologetic Absurdist Humor: The dialogue focuses on a homeowner attempting to synthesize 
+    a baby out of a microwave and dryer lint, only for the lint to gain sentience, demand 
+    a mortgage, and wield a knife. This subverts expectations and aligns perfectly with 
+    the requested adult, surreal comedy style.
+  - Crude Animation Styling: The visual design strictly mimics early South Park and Family Guy. 
+    We use the classic "Canadian" split-head flapping animation (via CSS keyframes) for speech 
+    synchronization. The characters are constructed from primitive SVG shapes with thick, 
+    jagged strokes (stroke-width: 4), unblended colors, and rigid, puppet-like movements 
+    (twitching eyes, static arms). 
+  - Technical Constraints: 100% zero-dependency HTML5. The layout enforces a strict 
+    mobile-first 9:16 aspect ratio (aspect-ratio: 9/16;) using CSS flexbox. Audio relies 
+    entirely on the native window.speechSynthesis API, safely gated behind a massive 
+    full-screen "Tap to Play" overlay to comply with stringent modern browser autoplay 
+    policies. Scene management uses simple DOM display toggling for an instant, jarring cut.
+-->
 <style>
-  body {
-    margin: 0;
-    padding: 0;
-    background-color: #222;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    font-family: 'Comic Sans MS', sans-serif;
+  body, html {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    background-color: #111; display: flex; justify-content: center; align-items: center;
+    font-family: 'Comic Sans MS', 'Arial', sans-serif;
+    overflow: hidden;
   }
   #wrapper {
     position: relative;
-    width: 360px;
-    height: 640px;
+    width: 100%;
+    max-width: 56.25vh; /* 9:16 aspect ratio constraint fallback */
     aspect-ratio: 9/16;
-    background-color: #87CEEB;
+    background-color: #87CEEB; /* Sky blue */
     overflow: hidden;
-    border: 2px solid #000;
+    box-shadow: 0 0 20px #000;
   }
   #overlay {
-    position: absolute;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    cursor: pointer;
-  }
-  .tap-btn {
-    background: #ff0000;
-    color: #fff;
-    padding: 30px;
-    font-size: 40px;
-    font-weight: 900;
-    text-transform: uppercase;
-    border: 8px solid #fff;
-    border-radius: 20px;
-    text-align: center;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: #FF0055; color: white;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    z-index: 9999; cursor: pointer; text-align: center;
+    font-size: 3rem; font-weight: 900;
+    text-shadow: 4px 4px 0 #000;
   }
   .scene {
-    position: absolute;
-    inset: 0;
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     display: none;
+    flex-direction: column; justify-content: flex-end; align-items: center;
   }
-  #scene1 {
-    display: block;
+  /* Crude Ground */
+  .ground {
+    position: absolute; bottom: 0; left: 0; width: 100%; height: 30%;
+    background: #228B22; border-top: 5px solid #000;
   }
-  #scene2 {
-    background-color: #000;
-    color: #fff;
-    font-size: 40px;
-    text-align: center;
-    padding-top: 250px;
-  }
+  /* Character CSS */
   .character {
     position: absolute;
-    bottom: -20px;
-    left: 50px;
+    bottom: 25%;
+    width: 60%;
+    height: 50%;
   }
-  .mouth {
-    transform-origin: 50% 50%;
+  .body-part {
+    stroke: #000; stroke-width: 4; stroke-linejoin: round;
   }
-  .is-talking .mouth {
-    animation: flap 0.15s infinite alternate;
+  .head-top {
+    transform-origin: bottom center;
   }
-  @keyframes flap {
-    0% { transform: scaleY(0.1); }
-    100% { transform: scaleY(1.5); }
+  .is-speaking .head-top {
+    animation: canadianFlap 0.15s infinite alternate steps(2);
   }
-  .speech-bubble {
-    position: absolute;
-    top: 50px;
-    left: 20px;
-    right: 20px;
-    background: white;
-    border: 3px solid black;
-    border-radius: 20px;
-    padding: 15px;
-    font-size: 20px;
-    font-weight: bold;
-    box-shadow: 5px 5px 0px rgba(0,0,0,0.3);
+  @keyframes canadianFlap {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-15px) rotate(2deg); }
+  }
+  .eye { fill: white; stroke: #000; stroke-width: 2; }
+  .pupil { fill: black; }
+  .twitching { animation: twitch 3s infinite; }
+  @keyframes twitch {
+    0%, 90% { transform: translate(0, 0); }
+    92% { transform: translate(3px, -3px); }
+    94% { transform: translate(-3px, 3px); }
+    96% { transform: translate(0, 0); }
+  }
+  
+  .subtitles {
+    position: absolute; bottom: 5%; left: 5%; width: 90%;
+    background: rgba(0,0,0,0.8); color: yellow;
+    padding: 10px; box-sizing: border-box;
+    font-size: 1.2rem; text-align: center; font-weight: bold;
+    border: 3px solid #000;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>
 </head>
 <body>
+
 <div id="wrapper">
-  
-  <div 
+  <div id="overlay" onclick="startExperience()">
+    <div>TAP TO</div>
+    <div style="font-size: 5rem;">PLAY</div>
+    <div style="font-size: 1.5rem; margin-top:20px;">Or the Lint-Ball Wins</div>
+  </div>
+
+  <div id="scene1" class="scene">
+    <div class="ground"></div>
+    <!-- Crude Character 1 -->
+    <svg class="character" viewBox="0 0 200 300" id="char1">
+      <!-- Body -->
+      <path class="body-part" fill="#FF4500" d="M40,300 L40,150 L160,150 L160,300 Z" />
+      <path class="body-part" fill="#000" d="M100,150 L100,300" stroke-width="2"/> <!-- zipper -->
+      <!-- Arms -->
+      <line class="body-part" x1="40" y1="160" x2="10" y2="230" stroke-width="8" stroke-linecap="round"/>
+      <line class="body-part" x1="160"
