@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* No aspect-ratio style at all! */
+    body { margin: 0; padding: 0; width: 100%; height: 100%; }
+  </style>
+</head>
+<body>
+  <div id="overlay" onclick="play()">Tap to Play</div>
+  <script>
+    function play() {
+      const u = new SpeechSynthesisUtterance('Desktop ratio speech');
+      window.speechSynthesis.speak(u);
+    }
+  </script>
+</body>
+</html>
