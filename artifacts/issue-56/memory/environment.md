@@ -21,3 +21,5 @@
 - Direct execution of verify.py returns VERDICT: FAIL with exit code 1. (receipt: memory.md ## Turn 28)
 - Fault-proof validation in verify.py triggers JSON parsing error: Expecting value: line 1 column 1 (char 0) on blank files and JSON parsing error: Unterminated string starting at: line 62 column 7 (char 2614) on truncated files. (receipt: memory.md ## Turn 28)
 - Gate rejected verify.py with FAULT-PROOF FAILED because no mechanical check catches a placeholder copy of script.json. (receipt: memory.md ## Turn 30)
+- Program execution timed out and was killed at the 30-second timeout limit. (receipt: memory.md ## Turn 2)
+- Evaluation on C6 failed because verify.py used the default gemini-3.5-flash model instead of the required gemini-3.1-pro-preview. (receipt: memory.md ## Turn 4)

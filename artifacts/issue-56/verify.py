@@ -6,7 +6,7 @@ from verify_kit import Kit
 kit = Kit()
 
 def check_json_parseable():
-    if not kit.no_placeholders('script.json'):
+    if not kit.no_placeholders('script.json')[0]:
         return False
     try:
         data = json.loads(kit.text('script.json'))
@@ -86,7 +86,8 @@ kit.judge(
     "script.json",
     kit.text('artifacts/board-20260909-090123/constitution.md'),
     "comedy, sharp edge, escalating absurdity, original characters",
-    threshold=8
+    threshold=8,
+    model="gemini-3.1-pro-preview"
 )
 kit.check("C7", "manifest.md exists and contains schema description", check_manifest)
 

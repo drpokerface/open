@@ -121,3 +121,31 @@
 {"t": 1788951818.6211941, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.1006, "note": ""}
 {"t": 1788951826.7077022, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0887, "note": ""}
 {"t": 1788951838.9951775, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.1191, "note": ""}
+{"t": 1788951870.5375876, "kind": "driver", "model": "gemini-3.5-flash", "inr": 0.0161, "note": "memory", "in": 661, "out": 327, "thoughts": 305}
+{"t": 1788951891.1130624, "kind": "driver", "model": "gemini-3.1-pro-preview", "inr": 2.7005, "note": "turn", "in": 16679, "out": 1130, "thoughts": 876}
+{"t": 1788951897.8776703, "kind": "driver", "model": "gemini-3.5-flash", "inr": 0.0491, "note": "memory", "in": 532, "out": 1359, "thoughts": 1257}
+{"t": 1788951905.7663786, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.067, "note": "twin:missing_manifest"}
+{"t": 1788951908.8372712, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0954, "note": "real"}
+{"t": 1788951917.7419155, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0972, "note": "real"}
+{"t": 1788951924.9033003, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0786, "note": "real"}
+{"t": 1788951930.6487021, "kind": "driver", "model": "gemini-3.5-flash", "inr": 0.1398, "note": "turn", "in": 13324, "out": 1005, "thoughts": 647}
+{"t": 1788951940.185898, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0957, "note": ""}
+{"t": 1788951949.0800798, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0911, "note": ""}
+{"t": 1788951962.1859095, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.124, "note": ""}
+{"t": 1788951967.5101116, "kind": "driver", "model": "gemini-3.5-flash", "inr": 0.0511, "note": "memory", "in": 486, "out": 1430, "thoughts": 1302}
+{"t": 1788951974.525906, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0634, "note": "twin:missing_manifest"}
+{"t": 1788951978.8811042, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.1053, "note": "real"}
+{"t": 1788951988.9128072, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.1044, "note": "real"}
+{"t": 1788951995.9372532, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0805, "note": "real"}
+{"t": 1788952000.4871275, "kind": "driver", "model": "gemini-3.5-flash", "inr": 0.1263, "note": "turn", "in": 13038, "out": 668, "thoughts": 452}
+{"t": 1788952006.5259683, "kind": "driver", "model": "gemini-3.5-flash", "inr": 0.0488, "note": "memory", "in": 1654, "out": 1079, "thoughts": 911}
+{"t": 1788952014.3098974, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0833, "note": ""}
+{"t": 1788952020.6599448, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0754, "note": ""}
+{"t": 1788952030.1960177, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0966, "note": ""}
+{"t": 1788952053.1177256, "kind": "driver", "model": "gemini-3.1-pro-preview", "inr": 2.7255, "note": "turn", "in": 14853, "out": 1388, "thoughts": 1082}
+{"t": 1788952058.3433304, "kind": "driver", "model": "gemini-3.5-flash", "inr": 0.0548, "note": "memory", "in": 2437, "out": 1071, "thoughts": 813}
+{"t": 1788952065.4101777, "kind": "llm", "model": "gemini-3.5-flash", "inr": 0.0628, "note": "twin:missing_manifest"}
+{"t": 1788952075.6445115, "kind": "llm", "model": "gemini-3.1-pro-preview", "inr": 1.1933, "note": "real"}
+{"t": 1788952089.786968, "kind": "llm", "model": "gemini-3.1-pro-preview", "inr": 1.5873, "note": "real"}
+{"t": 1788952102.4744859, "kind": "llm", "model": "gemini-3.1-pro-preview", "inr": 1.4042, "note": "real"}
+{"t": 1788952116.502858, "kind": "llm", "model": "gemini-3.1-pro-preview", "inr": 1.2084, "note": ""}

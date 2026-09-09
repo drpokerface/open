@@ -9,3 +9,5 @@
 - Decided to run a targeted comedic polish on script.json using gemini-3.1-pro-preview to increase the quality score from 8.2 to >= 8.5. (receipt: memory.md ## Turn 23)
 - Moved kit.judge to the top level in verify.py, replacing kit.check('C6'), because running kit.judge inside a check callback registered duplicate C6 claims and permanent corrupted-copy failures during fault_proof, causing VERDICT: FAIL. (receipt: memory.md ## Turn 29)
 - Added kit.no_placeholders('script.json') to verify.py checks to prevent placeholder copies of script.json from passing the gate. (receipt: memory.md ## Turn 30)
+- Fixed verify.py by checking the first element of the tuple returned by kit.no_placeholders('script.json') (not kit.no_placeholders(...)[0]) since the tuple itself is always truthy. (receipt: memory.md ## Turn 2)
+- Updated verify.py to use gemini-3.1-pro-preview to meet task requirements and resolve the C6 validation error. (receipt: memory.md ## Turn 4)
