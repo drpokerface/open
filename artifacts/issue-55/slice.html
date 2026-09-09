@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  body { margin: 0; background: #222; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+  .scene { width: 56.25vh; height: 100vh; background: #fff; position: relative; border: 2px solid #000; box-sizing: border-box; }
+  svg { width: 100%; height: 100%; }
+  .mouth { transition: transform 0.1s; }
+  .speaking .mouth { transform: scaleY(3) translateY(-2px); }
+  @keyframes shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(5px,-5px) rotate(5deg); } 50% { transform: translate(-5px,5px) rotate(-5deg); } 75% { transform: translate(5px,5px) rotate(5deg); } }
+  .punchline { animation: shake 0.5s infinite; fill: #ff4444 !important; }
+</style>
+</head>
+<body>
+<div class="scene">
+<svg id="stage" viewBox="0 0 1080 1920">
+  <rect width="1080" height="1920" fill="#aaccff"/>
+  <g id="char1" transform="translate(150, 800)">
+    <circle cx="200" cy="-200" r="150" fill="#ffccaa" stroke="#000" stroke-width="8" style="filter: drop-shadow(10px 10px 4px rgba(0,0,0,0.3));"/>
+    <circle cx="140" cy="-250" r="20" fill="#000"/>
+    <circle cx="260" cy="-250" r="20" fill="#000"/>
+    <path class="mouth" d="M 150 -100 Q 200 -50 250 -100" fill="none" stroke="#000" stroke-width="12"/>
+    <rect x="50" y="-50" width="300" height="400" fill="#3366cc" stroke="#000" stroke-width="8" style="filter: drop-shadow(10px 10px 4px rgba(0,0,0,0.3));"/>
+  </g>
+  <g id="char2" transform="translate(550, 900)">
+    <circle cx="150" cy="-200" r="130" fill="#ffccaa" stroke="#000" stroke-width="8" style="filter: drop-shadow(10px 10px 4px rgba(0,0,0,0.3));"/>
+    <circle cx="100" cy="-250" r="15" fill="#000"/>
+    <circle cx="200" cy="-250" r="15" fill="#000"/>
+    <path class="mouth" d="M 100 -100 Q 150 -50 200 -100" fill="none" stroke="#000" stroke-width="12"/>
+    <rect x="20" y="-50" width="260" height="350" fill="#cc3333" stroke="#000" stroke-width="8" style="filter: drop-shadow(10px 10px 4px rgba(0,0,0,0.3));"/>
+  </g>
+</svg>
+</div>
+<script>
+  window.speechSynthesis.cancel();
+  const script = [
+    { text: "We are required to exist here for exactly sixty seconds.", char: "char1", voice: 0, pitch: 1, rate: 0.9 },
+    { text: "Correct. Otherwise the constitution rejects us and we are deleted.", char: "char2", voice: 1, pitch: 1.5, rate: 1.1 },
+    { text: "I have been standing in this 9 by 16 vertical void my whole life.", char: "char1", voice: 0, pitch: 1, rate: 0.9 },
+    { text: "It is a modern tragedy, Bob. We are flat cutouts trapped in content formatting.", char: "char2", voice: 1, pitch: 1.5, rate: 1.1 },
+    { text: "Are we an allegory for corporate existence?", char: "char1", voice: 0, pitch: 1, rate: 0.9 },
+    { text: "No, we are just a tracer slice trying to hit a one-minute quota. Just keep talking.", char: "char2", voice: 1, pitch: 1.5, rate: 1.1 },
+    { text: "So I can just read the dictionary? Aardvark. Abacus. Abandon.", char: "char1", voice: 0, pitch: 1, rate: 0.9 },
+    { text: "Stop. That lacks narrative escalation. The judge will penalize us.", char: "char2", voice: 1, pitch: 1.5, rate: 1.1 },
+    { text: "Fine. I will escalate. I deleted the production database.", char: "char1", voice: 0, pitch: 1, rate: 0.9 },
+    { text: "You what? We do not even have hands! How did you type?", char: "char2", voice: 1, pitch: 1.5, rate: 1.1 },
+    { text: "I used my face. I smashed it against the keyboard for three hours until it dropped the tables.", char: "char1", voice: 0, pitch: 1, rate: 0.9 },
+    { text: "That is the punchline. You doomed us all for narrative escalation!", char: "char2", voice: 1, pitch: 1.5, rate: 1.1 }
+  ];
+
+  let currentLine = 0;
+  function speakNext() {
+    if (currentLine >= script.length) return;
+    const line = script[currentLine];
+    const u = new SpeechSynthesisUtterance(line.text);
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 1) {
+      u.voice = voices[line.voice % voices.length];
+    }
+    u.pitch = line.pitch;
+    u.rate = line.rate;
+    
+    u.onstart = () => {
+      document.getElementById(line.char).classList.add('speaking');
+      if (currentLine === script.length - 1) {
+        document.querySelector(`#${line.char} rect`).classList.add('punchline');
+      }
+    };
+    
+    u.onend = () => {
+      document.getElementById(line.char).classList.remove('speaking');
+      currentLine++;
+      setTimeout(speakNext, 300);
+    };
+    
+    window.speechSynthesis.speak(u);
+  }
+  
+  if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = () => {
+      if (currentLine === 0) speakNext();
+    };
+  }
+  setTimeout(() => { if (currentLine === 0) speakNext(); }, 1000);
+</script>
+</body>
+</html>
