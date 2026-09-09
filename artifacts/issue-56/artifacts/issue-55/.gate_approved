@@ -1,0 +1,1 @@
+{"hash": "f96be8cb8721ff820458098d870b1a8fd8731f0fe2398f1aa52a400bccba53e8", "turn": 20, "time": "2026-09-09T10:37:03Z", "detail": "verify.py ran green in a fresh process, proved it catches an induced fault, failed every degenerate twin, and survived a hostile audit (votes: gemini-3.5-flash=APPROVE, gemini-3.5-flash=APPROVE, gemini-3.1-pro-preview=APPROVE)"}

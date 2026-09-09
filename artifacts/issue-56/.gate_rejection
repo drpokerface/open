@@ -1,0 +1,13 @@
+rejection 5/5:
+verify.py must exist, exit 0, print FAULT-PROOF: <evidence>, and end with VERDICT: PASS. Its output was:
+th a sharp edge and escalating absurdity, but the deliverable fails the technical execution constraint by providing a JSON script instead of the r
+  C6 sample 2: 8.5 near 'comedy, sharp edge, escalating absurdity, original character' - The script delivers brilliant, highly cynical satire with exceptional comedic escalation and a perfect rapid-fire pace, though it is currently in JSON format rather than the final 
+  C6 sample 3: 8.5 near 'comedy, sharp edge, escalating absurdity, original character' - Score: 8.5/10 - Passes threshold. Dimension 1 aligns with anchor 9 (exceptional comedy with a sharp edge), Dimension 2 aligns with anchor 7 (the JSON structure provides precise spe
+C6: PASS - subjective comedy quality is >= 8 - measured: median 8.5 of [6.0, 8.5, 8.5] vs threshold 8 + margin 0.5, beats lazy baseline 2/3 - judged 5321 chars of script.json with gemini-3.5-flash x3
+C7: PASS - manifest.md exists and contains schema description - measured: all 3 present
+JSON parsing error: Expecting value: line 1 column 1 (char 0)
+JSON parsing error: Unterminated string starting at: line 62 column 7 (char 2614)
+Calculated max offset_ms: 111000
+Unique pitches: {0.6, 1.8, 2.0, 0.5, 1.5}, unique rates: {0.8, 1.5, 0.6, 1.3, 1.6, 1.8}
+FAULT-PROOF FAILED: script.json - blank: caught by C1, C2, C3, C4; truncate: caught by C1, C2, C3, C4; placeholder: caught by NOTHING - no mechanical check fails a placeholder copy of script.json; add kit.no_placeholders('script.json') to a check
+VERDICT: FAIL

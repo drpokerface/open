@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Tracer Slice</title>
+<style>
+  body { background: #000; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+  #canvas { width: 100%; max-width: 56.25vh; aspect-ratio: 9/16; background: #87CEEB; position: relative; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: background 0.1s; }
+  svg { width: 80%; height: 80%; filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.3)); }
+  #char1 { transition: transform 0.2s; }
+  #char1.speaking { animation: jump 0.3s infinite alternate; }
+  #mouth { fill: black; height: 2px; width: 10px; transition: height 0.1s, y 0.1s; }
+  #char1.speaking #mouth { animation: talk 0.15s infinite alternate; }
+  
+  /* The comedic cut changes the background instantly */
+  #canvas.cut { background: #FF6347; }
+
+  @keyframes jump {
+    0% { transform: translateY(0) rotate(-2deg); }
+    100% { transform: translateY(-5px) rotate(2deg); }
+  }
+  @keyframes talk {
+    0% { height: 2px; transform: translateY(0); }
+    100% { height: 10px; transform: translateY(-2px); }
+  }
+</style>
+</head>
+<body>
+<div id="canvas">
+<svg viewBox="0 0 100 100">
+  <g id="char1">
+    <rect x="35" y="50" width="30" height="50" fill="#1e90ff" rx="5" />
+    <circle cx="50" cy="35" r="15" fill="#ffdeb3" />
+    <circle cx="45" cy="32" r="2" fill="black" />
+    <circle cx="55" cy="32" r="2" fill="black" />
+    <rect id="mouth" x="45" y="40" width="10" height="2" />
+  </g>
+</svg>
+</div>
+
+<script>
+  window.speechSynthesis.cancel();
+  
+  const line1 = "They told me to animate a fully functional comedic cut in ten seconds.";
+  const line2 = "So I just made the background red. I am an absolute creative genius.";
+  
+  let started = false;
+
+  function speak() {
+    if (started) return;
+    started = true;
+    
+    const u1 = new SpeechSynthesisUtterance(line1);
+    const u2 = new SpeechSynthesisUtterance(line2);
+    
+    // Optimize voices for better timing/delivery if available
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+        u1.voice = voices[0];
+        u2.voice = voices[0];
+    }
+    u1.rate = 1.05;
+    u2.rate = 1.05;
+    
+    u1.onstart = () => { document.getElementById('char1').classList.add('speaking'); };
+    u1.onend = () => { 
+        document.getElementById('char1').classList.remove('speaking');
+        // The CUT:
+        document.getElementById('canvas').classList.add('cut');
+        setTimeout(() => window.speechSynthesis.speak(u2), 200);
+    };
+    
+    u2.onstart = () => { document.getElementById('char1').classList.add('speaking'); };
+    u2.onend = () => { document.getElementById('char1').classList.remove('speaking'); };
+    
+    window.speechSynthesis.speak(u1);
+  }
+
+  setTimeout(speak, 500);
+  document.body.addEventListener('click', speak);
+</script>
+</body>
+</html>

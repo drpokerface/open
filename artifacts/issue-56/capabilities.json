@@ -1,0 +1,25 @@
+{
+ "checked": "2026-09-08T21:06:37Z",
+ "models": {
+  "gemini-3.1-pro-preview": {
+   "ok": true,
+   "latency_ms": 3431,
+   "sample": "OK"
+  },
+  "gemini-3.5-flash": {
+   "ok": true,
+   "latency_ms": 1265,
+   "sample": "OK"
+  },
+  "gemini-3.5-pro": {
+   "ok": false,
+   "error": "known dead name - metered.py reroutes it",
+   "alias": "gemini-3.1-pro-preview"
+  }
+ },
+ "tools": {
+  "ffmpeg": "C:\\Users\\LENOVO\\Downloads\\swarm-work\\issue-56\\.ffmpeg-bin\\ffmpeg.EXE",
+  "git": true,
+  "ffprobe": false
+ }
+}

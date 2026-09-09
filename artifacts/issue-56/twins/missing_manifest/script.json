@@ -1,0 +1,74 @@
+{
+  "scenes": [
+    {
+      "id": 1,
+      "description": "A high-tech underground laboratory filled with bubbling glowing cheese vats."
+    },
+    {
+      "id": 2,
+      "description": "Cutaway: A boardroom meeting of pigeons wearing tiny business suits."
+    },
+    {
+      "id": 3,
+      "description": "Back to the lab, where a giant toast launcher is being loaded."
+    }
+  ],
+  "dialogue": [
+    {
+      "character": "Narrator",
+      "text": "Deep inside Mount Cheddar, Dr. Bleep is about to unleash his most absurd culinary invention.",
+      "pitch": 1.0,
+      "rate": 1.0,
+      "offset_ms": 0
+    },
+    {
+      "character": "Dr. Bleep",
+      "text": "Witness the Gluten-ator! It turns ordinary oxygen into high-density brioche!",
+      "pitch": 0.6,
+      "rate": 0.8,
+      "offset_ms": 10000
+    },
+    {
+      "character": "Gloop",
+      "text": "But Dr. Bleep! The pigeons! They have already weaponized the gluten-free alternative!",
+      "pitch": 1.8,
+      "rate": 1.3,
+      "offset_ms": 20000
+    },
+    {
+      "character": "Narrator",
+      "text": "Meanwhile, at the avian syndicate headquarters...",
+      "pitch": 1.0,
+      "rate": 1.0,
+      "offset_ms": 35000
+    },
+    {
+      "character": "Pigeon Boss",
+      "text": "Coo! Coo! We strike the bakery at dawn! Leave no crumb behind!",
+      "pitch": 1.5,
+      "rate": 1.1,
+      "offset_ms": 45000
+    },
+    {
+      "character": "Dr. Bleep",
+      "text": "No! It is too late! The yeast has gained self-awareness! Run!",
+      "pitch": 0.6,
+      "rate": 0.8,
+      "offset_ms": 65000
+    },
+    {
+      "character": "Gloop",
+      "text": "I always knew I would perish in a warm, buttery explosion! Goodbye, cruel world!",
+      "pitch": 1.8,
+      "rate": 1.3,
+      "offset_ms": 80000
+    },
+    {
+      "character": "Narrator",
+      "text": "And so, humanity was saved, but at what cost? Mostly the cost of butter.",
+      "pitch": 1.0,
+      "rate": 1.0,
+      "offset_ms": 95000
+    }
+  ]
+}
