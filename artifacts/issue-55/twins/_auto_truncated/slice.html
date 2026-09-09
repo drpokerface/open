@@ -1,40 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
+<title>Tracer Slice</title>
 <style>
-  body { margin: 0; background: #222; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-  .scene { width: 56.25vh; height: 100vh; background: #fff; position: relative; border: 2px solid #000; box-sizing: border-box; }
-  svg { width: 100%; height: 100%; }
-  .mouth { transition: transform 0.1s; }
-  .speaking .mouth { transform: scaleY(3) translateY(-2px); }
-  @keyframes shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(5px,-5px) rotate(5deg); } 50% { transform: translate(-5px,5px) rotate(-5deg); } 75% { transform: translate(5px,5px) rotate(5deg); } }
-  .punchline { animation: shake 0.5s infinite; fill: #ff4444 !important; }
+  body { background: #000; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+  #canvas { width: 100%; max-width: 56.25vh; aspect-ratio: 9/16; background: #87CEEB; position: relative; display: flex; justify-content: center; align-items: center; overflow: hidden; transition: background 0.1s; }
+  svg { width: 80%; height: 80%; filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.3)); }
+  #char1 { transition: transform 0.2s; }
+  #char1.speaking { animation: jump 0.3s infinite alternate; }
+  #mouth { fill: black; height: 2px; width: 10px; transition: height 0.1s, y 0.1s; }
+  #char1.speaking #mouth { animation: talk 0.15s infinite alternate; }
+  
+  /* The comedic cut changes the background instantly */
+  #canvas.cut { background: #FF6347; }
+
+  @keyframes jump {
+    0% { transform: translateY(0) rotate(-2deg); }
+    100% { transform: translateY(-5px) rotate(2deg); }
+  }
+  @keyframes talk {
+    0% { height: 2px; transform: translateY(0); }
+    100% { height: 10px; transform: translateY(-2px); }
+  }
 </style>
 </head>
 <body>
-<div class="scene">
-<svg id="stage" viewBox="0 0 1080 1920">
-  <rect width="1080" height="1920" fill="#aaccff"/>
-  <g id="char1" transform="translate(150, 800)">
-    <circle cx="200" cy="-200" r="150" fill="#ffccaa" stroke="#000" stroke-width="8" style="filter: drop-shadow(10px 10px 4px rgba(0,0,0,0.3));"/>
-    <circle cx="140" cy="-250" r="20" fill="#000"/>
-    <circle cx="260" cy="-250" r="20" fill="#000"/>
-    <path class="mouth" d="M 150 -100 Q 200 -50 250 -100" fill="none" stroke="#000" stroke-width="12"/>
-    <rect x="50" y="-50" width="300" height="400" fill="#3366cc" stroke="#000" stroke-width="8" style="filter: drop-shadow(10px 10px 4px rgba(0,0,0,0.3));"/>
-  </g>
-  <g id="char2" transform="translate(550, 900)">
-    <circle cx="150" cy="-200" r="130" fill="#ffccaa" stroke="#000" stroke-width="8" style="filter: drop-shadow(10px 10px 4px rgba(0,0,0,0.3));"/>
-    <circle cx="100" cy="-250" r="15" fill="#000"/>
-    <circle cx="200" cy="-250" r="15" fill="#000"/>
-    <path class="mouth" d="M 100 -100 Q 150 -50 200 -100" fill="none" stroke="#000" stroke-width="12"/>
-    <rect x="20" y="-50" width="260" height="350" fill="#cc3333" stroke="#000" stroke-width="8" style="filter: drop-shadow(10px 10px 4px rgba(0,0,0,0.3));"/>
-  </g>
-</svg>
-</div>
-<script>
-  window.speechSynthesis.cancel();
-  const script = [
-    { text: "We are required to exist here for exactly sixty seconds.", char: "char1", voice: 0, pitch: 1, rate: 0.9 },
-    { text: "Correct. Otherwise the constitution rejects us and we are deleted.", char: "char2", voice: 1, pitch: 1.5, rate: 1.1 },
-    { text:
+<div id="canvas">
+<svg viewBox="0 0 100 100">
+  <g id="char1">
+    <rect x="35" y="50" width="30" height="50" fill="#1e90ff" rx="5" />
+    <circle cx="50" cy="35" r="15" fill="#ffdeb3" />
+    <circle cx="45" cy="32" r="2" fill="black" />
+    <circle cx="55" cy="32" r="2" fill="bla

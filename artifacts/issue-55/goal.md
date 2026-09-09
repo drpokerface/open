@@ -7,3 +7,13 @@ Save the main deliverable as slice.html.
 Already provided in your working directory: artifacts/board-20260909-090123/constitution.md
 
 SWARM CHANNEL: you are working issue #55 of the GitHub repo drpokerface/open (token in GITHUB_TOKEN env). If you discover work this plan is missing, you may post ONE comment on your own issue via the API starting exactly 'PROPOSE-TASK: ' (state: title, why, which existing deliverable it unblocks, what it produces). Facing an irreversible, genuinely ambiguous choice, you may post ONE comment starting exactly 'QUESTION: ', then continue on the reversible path without waiting. If a PROVIDED input artifact fails your validation (placeholder, degenerate, or broken contract), post ONE comment starting exactly 'INPUT-REJECT: #<producing issue number> ' plus one line of evidence - the swarm will reopen that task; then declare impossible honestly instead of building on garbage. If providers.md lacks an adequate tool for a capability this task needs, you may post ONE comment starting exactly 'PROPOSE-PROVIDER: ' (capability, best candidate service, pricing, what it unlocks) - the owner decides about subscribing; continue meanwhile on the best reachable tier. Never create issues yourself; an owner-side arbiter reviews and answers as an 'ARBITER re' comment on this issue.
+
+LAST VERIFICATION FAILURE (repair this first):
+VERIFY: FAIL by worker-1 (drpokerface)
+its own RESULT reports the gate was not passed - sent back for retry, not closed.
+gate: NOT passed (ran out of turns, budget, or rejections)
+why: Stopping: the gate rejected the work 5 times.
+last gate rejection: rejection 5/5:
+a hostile audit rejected the claim (votes: gemini-3.5-flash=REJECT, gemini-3.5-flash=APPROVE, gemini-3.1-pro-preview=REJECT):
+[gemini-3.5-flash] Failure to detect silent/degenerate speech output: The specification explicitly demands that verify.py must 'fail degenerate output (blank, silent, empty, uniform, truncated) regardless of metadata.' However, verify.py has no mechanism to ensure that the Web Speech API actually triggered, successfully executed, or spoke the lines (e.g. by intercepting or spying on window.speechSynthesis.speak). A completely silent run would still pass. Hollow subjective quality evaluation (C9): In kit.judge, the captured_output_text parameter is hardcoded to a dummy string literal ('No external anchors availab
+[gemini-3.1-pro-preview] **Failure to trigger playback:** The specification explicitly requires `verify.py` to "trigger play" (consuming th

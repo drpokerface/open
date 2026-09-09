@@ -13,3 +13,4 @@
 - A search of memory/artifacts/constitution.md for 'duration', 'second', 'joke', 'comedy', or 'style' returned no matches. (receipt: memory.md ## Turn 48)
 - Searching the constitution file for 'Dimension|Score 7|Anchor' yielded no matches. (receipt: memory.md ## Turn 73)
 - Searching scratch/constitution_summary.txt with regex 'Dimension|Anchor|9:16|voice' returned no matches. (receipt: memory.md ## Turn 75)
+- The constitution file at artifacts/board-20260909-090123/constitution.md is 14058 bytes (SHA a481bb2c) and mandates a 60-119 second runtime, a 9:16 aspect ratio, and a minimum passing score of 8.0 out of 10. (receipt: memory.md ## Turn 4)

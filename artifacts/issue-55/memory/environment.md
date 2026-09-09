@@ -31,3 +31,4 @@
 - beautifulsoup4 is installed, allowing verify.py to execute. (receipt: memory.md ## Turn 20)
 - Python code execution was killed due to a 60-second timeout limit during verification. (receipt: memory.md ## Turn 24)
 - Reading a file with an unchanged hash (scratch/constitution_summary.txt) that was already read in turn 43 is blocked with the message: 'no - you already read scratch/constitution_summary.txt at this exact content (turn 43); STATE FACTS shows its hash is unchanged. Act on what you know.' (receipt: memory.md ## Turn 76)
+- The Python code execution environment enforces a strict 60-second timeout, which killed the script wrapper attempting to run verify.py. (receipt: memory.md ## Turn 7)

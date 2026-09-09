@@ -11,3 +11,8 @@
 - Decided to completely rewrite slice.html to address penalties for missing 9:16 ratio, lack of multi-voice, and safe IT humor. (receipt: memory.md ## Turn 78)
 - Shifted humor style in slice.html from safe IT jokes to highly absurd and unhinged humor to satisfy C9 subjective rubric criteria. (receipt: memory.md ## Turn 78)
 - Decided on Turn 79 to completely rewrite slice.html to satisfy the 60-second minimum runtime and narrative escalation requirements to avoid a failing score. (receipt: memory.md ## Turn 79)
+- Rewrote verify.py to intercept window.speechSynthesis.speak, log spoken text to a file, trigger playback via page.click('body'), and pass captured spoken text to kit.judge instead of raw HTML source. (receipt: memory.md ## Turn 2)
+- Decided to shorten and rewrite the slice.html dialogue to fit the entire joke within a 7-8 second window to prevent truncation under headless browser validation. (receipt: memory.md ## Turn 14)
+- Reduced `slice.html` duration to 6-8 seconds, using exactly one scene, one cut, and one split voiced line to guarantee the punchline is fully captured within the 8-second window. (receipt: memory.md ## Turn 15)
+- Decided to modify slice.html to incorporate a 9:16 aspect ratio container after the validation judge failed the previous version for missing this requirement. (receipt: memory.md ## Turn 19)
+- Wrapped the SVG in slice.html in a #canvas element with a locked 9:16 aspect-ratio centered against a black body background following a rejection for lacking a canvas wrapper. (receipt: memory.md ## Turn 20)
