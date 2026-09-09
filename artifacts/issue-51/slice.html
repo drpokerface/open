@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tracer Slice</title>
+<style>
+  body {
+    margin: 0;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    font-family: sans-serif;
+  }
+  #container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 9 / 16;
+    max-width: 1080px;
+    max-height: 1920px;
+    background: #87CEEB;
+    overflow: hidden;
+  }
+  .scene {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    display: none;
+  }
+  .scene.active {
+    display: block;
+  }
+  #subtitles {
+    position: absolute;
+    bottom: 10%;
+    width: 90%;
+    left: 5%;
+    text-align: center;
+    font-size: 3vh;
+    color: yellow;
+    text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+    font-weight: bold;
+    display: none;
+    z-index: 100;
+  }
+  #start-screen {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+  }
+  #play-btn {
+    font-size: 4vh;
+    padding: 20px 40px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div id="container">
+  <div id="start-screen">
+    <button id="play-btn">PLAY</button>
+  </div>
+
+  <div id="scene-1" class="scene">
+    <!-- Kitchen -->
+    <svg id="svg-kitchen" width="100%" height="100%" viewBox="0 0 1080 1920">
+      <rect width="1080" height="1920" fill="#d3d3d3" />
+      <rect x="0" y="1000" width="1080" height="920" fill="#a9a9a9" />
+      <!-- Fire -->
+      <path d="M 200 1000 Q 250 800 300 1000 Q 350 700 400 1000" fill="red" />
+      <path d="M 220 1000 Q 250 850 280 1000 Q 320 750 360 1000" fill="orange" />
+      
+      <!-- Bob -->
+      <g id="svg-bob">
+        <circle cx="700" cy="700" r="150" fill="#ffcc99" />
+        <rect x="650" y="850" width="100" height="300" fill="#fff" />
+        <circle cx="650" cy="650" r="20" fill="#000" />
+        <circle cx="750" cy="650" r="20" fill="#000" />
+        <path id="bob-mouth" d="M 650 750 Q 700 750 750 750" stroke="#000" stroke-width="10" fill="none" />
+      </g>
+
+      <!-- Jimmy -->
+      <g id="svg-jimmy">
+        <circle cx="300" cy="800" r="100" fill="#ffcc99" />
+        <rect x="250" y="900" width="100" height="200" fill="blue" />
+        <circle cx="270" cy="770" r="10" fill="#000" />
+        <circle cx="330" cy="770" r="10" fill="#000" />
+        <path id="jimmy-mouth" d="M 270 850 Q 300 850 330 850" stroke="#000" stroke-width="8" fill="none" />
+      </g>
+    </svg>
+  </div>
+
+  <div id="scene-2" class="scene">
+    <!-- Wolves -->
+    <svg id="svg-wolves" width="100%" height="100%" viewBox="0 0 1080 1920">
+      <rect width="1080" height="1920" fill="#228B22" />
+      <g id="svg-wolf-customer">
+        <circle cx="540" cy="800" r="200" fill="#555" />
+        <polygon points="400,600 450,650 500,600" fill="#555" />
+        <polygon points="680,600 630,650 580,600" fill="#555" />
+        <circle cx="480" cy="750" r="20" fill="yellow" />
+        <circle cx="600" cy="750" r="20" fill="yellow" />
+        <path id="wolf-mouth" d="M 480 900 Q 540 900 600 900" stroke="#000" stroke-width="15" fill="none" />
+      </g>
+    </svg>
+  </div>
+
+  <div id="subtitles"></div>
+</div>
+
+<script>
+  const playBtn = document.getElementById('play-btn');
+  const startScreen = document.getElementById('start-screen');
+  const scene1 = document.getElementById('scene-1');
+  const scene2 = document.getElementById('scene-2');
+  const subtitles = document.getElementById('subtitles');
+  
+  const bobMouth = document.getElementById('bob-mouth');
+  const jimmyMouth = document.getElementById('jimmy-mouth');
+  const wolfMouth = document.getElementById('wolf-mouth');
+
+  let mouthInterval;
+
+  function setMouth(mouth, open) {
+    if (!mouth) return;
+    if (mouth.id === 'bob-mouth') {
+      mouth.setAttribute('d', open ? 'M 650 750 Q 700 800 750 750' : 'M 650 750 Q 700 750 750 750');
+    } else if (mouth.id === 'jimmy-mouth') {
+      mouth.setAttribute('d', open ? 'M 270 850 Q 300 890 330 850' : 'M 270 850 Q 300 850 330 850');
+    } else if (mouth.id === 'wolf-mouth') {
+      mouth.setAttribute('d', open ? 'M 480 900 Q 540 980 600 900' : 'M 480 900 Q 540 900 600 900');
+    }
+  }
+
+  function speakLine(text, pitch, rate, mouthEl, duration, callback) {
+    subtitles.textContent = text;
+    subtitles.style.display = 'block';
+    
+    const u = new SpeechSynthesisUtterance(text);
+    u.pitch = pitch;
+    u.rate = rate;
+    
+    u.onstart = () => {
+      mouthInterval = setInterval(() => setMouth(mouthEl, Math.random() > 0.5), 100);
+    };
+    
+    u.onend = () => {
+      clearInterval(mouthInterval);
+      setMouth(mouthEl, false);
+      subtitles.style.display = 'none';
+      if (callback) callback();
+    };
+    
+    window.speechSynthesis.speak(u);
+  }
+
+  playBtn.addEventListener('click', () => {
+    startScreen.style.display = 'none';
+    scene1.classList.add('active');
+    
+    // 0ms Init Scene 1
+    setTimeout(() => {
+      // 500ms: Jimmy
+      speakLine("Bob! The kitchen is on fire! We are going to die!", 1.8, 1.2, jimmyMouth);
+    }, 500);
+
+    setTimeout(() => {
+      // 3500ms: Bob
+      speakLine("Calm down, Jimmy. This is worse than the time I was a chef for a pack of wolves.", 0.1, 0.9, bobMouth);
+    }, 3500);
+
+    setTimeout(() => {
+      // 7000ms: Cutaway
+      scene1.classList.remove('active');
+      scene2.classList.add('active');
+    }, 7000);
+
+    setTimeout(() => {
+      // 7500ms: Wolf Customer
+      speakLine("This gazelle is raw. My compliments to the chef for doing absolutely nothing.", 0.1, 0.8, wolfMouth);
+    }, 7500);
+
+    setTimeout(() => {
+      // 9500ms: Cut back
+      scene2.classList.remove('active');
+      scene1.classList.add('active');
+    }, 9500);
+    
+    setTimeout(() => {
+      // 10000ms: End
+      console.log('Sequence complete');
+    }, 10000);
+  });
+</script>
+</body>
+</html>

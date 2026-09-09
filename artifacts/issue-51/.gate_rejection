@@ -1,0 +1,11 @@
+rejection 5/5:
+verify.py must exist, exit 0, print FAULT-PROOF: <evidence>, and end with VERDICT: PASS. Its output was:
+t perfectly executes the classic Family Guy cutaway formula, using the exact setup from Anchor 1 with meticulously timed cues and contrasting voice profiles.
+C9: PASS - Comedic Cutaway Impact >= 8.0 - measured: median 9.0 of [9.0, 9.0, 9.0] vs threshold 8.0 + margin 0.5, beats lazy baseline 3/3 - judged 943 chars of scratch/c9_eval.txt with gemini-3.5-flash x3
+  C9 sample 1: 3.0 near 'Anchor 1' - The manifest successfully designs a Family Guy-style cutaway matching Anchor 1 and Anchor 2, but the actual HTML deliverable is severely truncated and cut off mid-markup, rendering
+  C9 sample 2: 3.0 near 'Anchor 1' - The deliverable is severely truncated and cuts off abruptly inside the HTML body at 'jimmy-mouth', leaving the file incomplete, non-functional, and unable to execute any of the pla
+  C9 sample 3: 4.0 near 'Anchor 1: A dialogue about a mundane event leading into a su' - The comedic setup in the manifest perfectly mirrors Anchor 1, but the implementation code is severely truncated and incomplete, preventing any actual execution or playback.
+C9: FAIL - Comedic Cutaway Impact >= 8.0 - measured: median 3.0 of [3.0, 3.0, 4.0] vs threshold 8.0 + margin 0.5, beats lazy baseline 0/3 - judged 3652 chars of scratch/c9_eval.txt with gemini-3.5-flash x3
+C9: FAIL - Comedic Cutaway Impact >= 8.0 - skipped: an earlier check already failed (fail-fast, no model call)
+FAULT-PROOF: slice.html - blank: caught by C4, C5, C7, C8; truncate: caught by C8; placeholder: caught by C4
+VERDICT: FAIL

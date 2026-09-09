@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Project Cutaway - Tracer Slice</title>
+  <style>
+    /* Absolute center the 9:16 vertical viewport */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Arial Black', sans-serif;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 9/16;
+      max-width: 1080px;
+      max-height: 1920px;
+      background-color: #333;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #start-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    #play-btn {
+      background-color: #ff3b30;
+      color: white;
+      border: none;
+      padding: 20px 40px;
+      font-size: 2rem;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    #play-btn:hover {
+      background-color: #ff453a;
+      transform: scale(1.05);
+    }
+
+    #viewport {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background-color: #222;
+    }
+
+    /* Scene containers */
+    .scene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+    }
+
+    .active {
+      display: block;
+    }
+
+    /* Subtitles Typography Overlay */
+    #subtitles {
+      position: absolute;
+      bottom: 10%;
+      left: 5%;
+      right: 5%;
+      background: rgba(0, 0, 0, 0.75);
+      color: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 1.8rem;
+      text-align: center;
+      text-transform: uppercase;
+      -webkit-text-stroke: 1px black;
+      text-shadow: 2px 2px 0px #000;
+      z-index: 5;
+      display: none;
+      word-wrap: break-word;
+    }
+
+    /* Animation classes */
+    .talking {
+      animation: bounce 0.2s infinite alternate;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Start / Play Screen -->
+  <div id="start-screen">
+    <h1 style="margin-bottom: 30px; font-size: 2.5rem;">PROJECT CUTAWAY</h1>
+    <p style="margin-bottom: 40px; font-size: 1.2rem; color: #aaa;">Click play to begin the 10-second comedy tracer slice.</p>
+    <button id="play-btn">PLAY VIDEO</button>
+  </div>
+
+  <!-- Main Viewport -->
+  <div id="viewport">
+    
+    <!-- Scene 1: Bob's Kitchen -->
+    <div id="scene-1" class="scene active">
+      <!-- Background SVG -->
+      <svg id="svg-bg-kitchen" viewBox="0 0 1080 1920" style="position: absolute; width:100%; height:100%;">
+        <!-- Walls -->
+        <rect width="1080" height="1920" fill="#fce4ec"/>
+        <!-- Floor -->
+        <rect y="1400" width="1080" height="520" fill="#8d6e63"/>
+        <!-- Floor trim -->
+        <rect y="1380" width="1080" height="20" fill="#5d4037"/>
+        <!-- Counter -->
+        <rect x="100" y="1100" width="880" height="280" fill="#e0e0e0" rx="10"/>
+        <rect x="100" y="1080" width="880" height="20" fill="#b0bec5"/>
+        <!-- Kitchen Window -->
+        <rect x="390" y="400" width="300" height="400" fill="#81d4fa" stroke="#455a64" stroke-width="15"/>
+        <line x1="540" y1="400" x2="540" y2="800" stroke="#455a64" stroke-width="10"/>
+        <line x1="390" y1="600" x2="690" y2="600" stroke="#455a64" stroke-width="10"/>
+        <!-- Sun in window -->
+        <circle cx="450" cy="480" r="40" fill="#fff59d"/>
+      </svg>
+
+      <!-- Bob Character SVG -->
+      <div id="bob-container" style="position: absolute; bottom: 350px; left: 340px; width: 400px; height: 500px; transition: transform 0.1s;">
+        <svg id="svg-character-bob" viewBox="0 0 400 500" style="width: 100%; height: 100%;">
+          <!-- Body / Red Parka -->
+          <ellipse cx="200" cy="400" rx="120" ry="100" fill="#e65100" />
+          <!-- Hands -->
+          <circle cx="70" cy="400" r="25" fill="#ffcc80" />
+          <circle cx="330" cy="400" r="25" fill="#ffcc80" />
+          <!-- Head / Skin -->
+          <circle cx="200" cy="240" r="110" fill="#ffe0b2" />
+          <!-- Eyes -->
+          <ellipse cx="160" cy="220" rx="25" ry="35" fill="#ffffff" stroke="#000" stroke-width="3"/>
+          <ellipse cx="240" cy="220" rx="25" ry="35" fill="#ffffff" stroke="#000" stroke-width="3"/>
+          <!-- Pupils (cross-eyed slightly for comedy/derp) -->
+          <circle cx="165" cy="220" r="8" fill="#000000" />
+          <circle cx="235" cy="220" r="8" fill="#000000" />
+          <!-- Chef Hat -->
+          <path d="M 120 150 Q 100 80 150 80 Q 200 40 250 80 Q 300 80 280 150 Z" fill="#ffffff" stroke="#ccc" stroke-width="3"/>
+          <rect x="130" y="130" width="140" height="30" fill="#ffffff" stroke="#ccc" stroke-width="3"/>
+          <!-- Mouth (dynamic via JS) -->
+          <path id="bob-mouth" d="M 170 290 Q 200 320 230 290" fill="none" stroke="#000000" stroke-width="8" stroke-linecap="round" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Scene 2: Cutaway (Peter the vegetarian wolf) -->
+    <div id="scene-2" class="scene">
+      <!-- Background SVG -->
+      <svg id="svg-bg-cutaway" viewBox="0 0 1080 1920" style="position: absolute; width:100%; height:100%;">
+        <!-- Forest Background -->
+        <rect width="1080" height="1920" fill="#a5d6a7"/>
+        <!-- Floor / grass -->
+        <rect y="1300" width="1080" height="620" fill="#81c784"/>
+        <!-- Simple Trees -->
+        <polygon points="150,1300 50,1100 250,1100" fill="#2e7d32"/>
+        <rect x="135" y="1300" width="30" height="100" fill="#5d4037"/>
+        <polygon points="900,1300 800,1050 1000,1050" fill="#2e7d32"/>
+        <rect x="885" y="1300" width=
+
+[PLACEHOLDER - TODO: fill this section in]
+
+"30" height="100" fill="#5d4037"/>
+      </svg>
+
+      <!-- Peter Character SVG -->
+      <div id="peter-container" style="position: absolute; bottom: 400px; left: 240px; width: 600px; height: 600px; transition: transform 0.1s;">
+        <svg id="svg-cutaway-peter" viewBox="0 0 600 600" style="width: 100%; height: 100%;">
+          <!-- Wolf Body -->
+          <ellipse cx="300" cy="450" rx="180" ry="120" fill="#78909c" />
+          <!-- Wolf Neck -->
+          <rect x="230" y="250" width="140" height="150" fill="#78909c" />
+          <!-- Wolf Head -->
+          <polygon points="150,220 450,220 300,380" fill="#78909c" />
+          <!-- Wolf Ears -->
+          <polygon points="170,220 130,120 210,180" fill="#546e7a" />
+          <polygon points="430,220 470,120 390,180" fill="#546e7a" />
+          <!-- Snout -->
+          <polygon points="260,330 340,330 300,430" fill="#37474f" />
+          <!-- Nose tip -->
+          <circle cx="300" cy="415" r="18" fill="#000000" />
+          <!-- Eyes -->
+          <circle cx="240" cy="200" r="30" fill="#fff" stroke="#000" stroke-width="3"/>
+          <circle cx="360" cy="200" r="30" fill="#fff" stroke="#000" stroke-width="3"/>
+          <!-- Pupils -->
+          <circle cx="245" cy="200" r="10" fill="#000"/>
+          <circle cx="355" cy="200" r="10" fill="#000"/>
+          <!-- Salad Bowl / Lawn clippings in front -->
+          <ellipse cx="300" cy="510" rx="120" ry="50" fill="#d7ccc8" stroke="#8d6e63" stroke-width="8" />
+          <!-- Greens -->
+          <ellipse cx="300" cy="495" rx="100" ry="30" fill="#4caf50" />
+          <!-- Single Dandelion in the bowl -->
+          <circle cx="270" cy="490" r="15" fill="#ffeb3b" />
+          <rect x="267" y="495" width="6" height="20" fill="#4caf50" />
+          <!-- Mouth line -->
+          <path id="peter-mouth" d="M 270 340 Q 300 340 330 340" fill="none" stroke="#000000" stroke-width="8" stroke-linecap="round" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Subtitles Overlay -->
+    <div id="subtitles"></div>
+
+  </div>
+</div>
+
+<script>
+  const playBtn = document.getElementById('play-btn');
+  const startScreen = document.getElementById('start-screen');
+  const subtitles = document.getElementById('subtitles');
+
+  const scene1 = document.getElementById('scene-1');
+  const scene2 = document.getElementById('scene-2');
+
+  const bobContainer = document.getElementById('bob-container');
+  const peterContainer = document.getElementById('peter-container');
+
+  const bobMouth = document.getElementById('bob-mouth');
+  const peterMouth = document.getElementById('peter-mouth');
+
+  const synth = window.speechSynthesis;
+
+  // Pre-load voices (some browsers require this event)
+  if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = () => {};
+  }
+
+  function speakLine(text, pitch, rate, mouthEl, containerEl, onEndCallback) {
+    // Subtitles display
+    subtitles.textContent = text;
+    subtitles.style.display = 'block';
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.pitch = pitch;
+    utterance.rate = rate;
+
+    // Try to get an English voice
+    const voices = synth.getVoices();
+    const voice = voices.find(v => v.lang.startsWith('en')) || voices[0];
+    if (voice) {
+      utterance.voice = voice;
+    }
+
+    // Mouth animation setup
+    let intervalId;
+    utterance.onstart = () => {
+      containerEl.classList.add('talking');
+      intervalId = setInterval(() => {
+        // Toggle mouth shape
+        const isOpen = Math.random() > 0.5;
+        if (mouthEl.id === 'bob-mouth') {
+          mouthEl.setAttribute('d', isOpen ? 'M 170 300 Q 200 340 230 300' : 'M 170 290 Q 200 320 230 290');
+        } else {
+          // Peter mouth (wolf snout mouth)
+          mouthEl.setAttribute('d', isOpen ? 'M 270 350 Q 300 380 330 350' : 'M 270 340 Q 300 340 330 340');
+        }
+      }, 100);
+    };
+
+    utterance.onend = () => {
+      clearInterval(intervalId);
+      containerEl.classList.remove('talking');
+      // Reset mouth
+      if (mouthEl.id === 'bob-mouth') {
+        mouthEl.setAttribute('d', 'M 170 290 Q 200 320 230 290');
+      } else {
+        mouthEl.setAttribute('d', 'M 270 340 Q 300 340 330 340');
+      }
+      subtitles.style.display = 'none';
+      if (onEndCallback) onEndCallback();
+    };
+
+    utterance.onerror = (e) => {
+      console.error(e);
+      clearInterval(intervalId);
+      containerEl.classList.remove('talking');
+      subtitles.style.display = 'none';
+      if (onEndCallback) onEndCallback();
+    };
+
+    synth.speak(utterance);
+  }
+
+  playBtn.addEventListener('click', () => {
+    // Hide start screen
+    startScreen.style.display = 'none';
+    
+    // Sequence according to Timeline Cues in manifest.md:
+    // - 0ms: User clicks play, init Scene 1, Bob speaks.
+    // - 3000ms: Bob says "This is worse than..."
+    // - 4500ms: Cutaway gag triggers, cut to Peter.
+    // - 5000ms: Peter speaks punchline.
+    // - 9000ms: End slice.
+
+    // 0ms Cue
+    speakLine(
+      "I hate cooking in this tiny kitchen.",
+      1.2, // Bob pitch
+      1.5, // Bob rate
+      bobMouth,
+      bobContainer
+    );
+
+    // 3000ms Cue: Bob second line
+    setTimeout(() => {
+      speakLine(
+        "This is worse than the time I was a sous chef for a pack of vegetarian wolves!",
+        1.2,
+        1.5,
+        bobMouth,
+        bobContainer
+      );
+    }, 3000);
+
+    // 4500ms Cue: Cutaway triggers (cut to Scene 2 / Peter)
+    setTimeout(() => {
+      synth.cancel(); // Stop Bob if still speaking
+      scene1.classList.remove('active');
+      scene2.classList.add('active');
+    }, 4500);
+
+    // 5000ms Cue: Peter speaks punchline
+    setTimeout(() => {
+      speakLine(
+        "I asked for organic lawn clippings, Bob. This is a dandelion. I will eat your family.",
+        0.8, // Peter pitch
+        0.9, // Peter rate
+        peterMouth,
+        peterContainer
+      );
+    }, 5000);
+
+    // 9000ms Cue: End slice (Fade or reset to start screen)
+    setTimeout(() => {
+      synth.cancel();
+      scene2.classList.remove('active');
+      scene1.classList.add('active');
+      subtitles.style.display = 'none';
+      startScreen.style.display = 'flex';
+    }, 9000);
+  });
+</script>
+</body>
+</html>
