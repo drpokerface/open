@@ -12,4 +12,4 @@ LAST VERIFICATION FAILURE (repair this first):
 VERIFY: FAIL by worker-1 (drpokerface)
 its own RESULT reports the gate was not passed - sent back for retry, not closed.
 gate: NOT passed (ran out of turns, budget, or rejections)
-why: the seed run was killed at the 3600 second timeout
+why: Stopping: the gate could not reach a verdict: a model call in verify.py hit a resource wall (quota / rate limit) - a model/api problem, not a work failure; the claim stands and is re-judged on resume
