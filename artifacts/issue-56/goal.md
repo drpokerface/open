@@ -12,10 +12,4 @@ LAST VERIFICATION FAILURE (repair this first):
 VERIFY: FAIL by worker-1 (drpokerface)
 its own RESULT reports the gate was not passed - sent back for retry, not closed.
 gate: NOT passed (ran out of turns, budget, or rejections)
-why: Stopping: the gate rejected the work 5 times.
-last gate rejection: rejection 5/5:
-verify.py must exist, exit 0, print FAULT-PROOF: <evidence>, and end with VERDICT: PASS. Its output was:
-th a sharp edge and escalating absurdity, but the deliverable fails the technical execution constraint by providing a JSON script instead of the r
-  C6 sample 2: 8.5 near 'comedy, sharp edge, escalating absurdity, original character' - The script delivers brilliant, highly cynical satire with exceptional comedic escalation and a perfect rapid-fire pace, though it is currently in JSON format rather than the final 
-  C6 sample 3: 8.5 near 'comedy, sharp edge, escalating absurdity, original character' - Score: 8.5/10 - Passes threshold. Dimension 1 aligns with anchor 9 (exceptional comedy with a sharp edge), Dimension 2 aligns with anchor 7 (the JSON structure provides precise spe
-C6: PASS - subjective comedy quality is >= 8 - measured: median 8.5 of [6.0, 8.5, 8.5] vs thr
+why: the seed run was killed at the 3600 second timeout

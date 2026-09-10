@@ -1696,3 +1696,153 @@ C4: PASS - voice parameters show variation - measured: True
 C5: PASS - no copyrighted names are used - measured: True
 C6: UNAVAILABLE - subjective comedy quality is >= 8 - verification could not run: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage
 VERIFICATION-UNAVAILABLE: a model call in verify.py hit a resource wall (quota / rate limit / 429) - not a work failure; the gate abstains and the task retries later
+
+## Seed born
+goal: Script and Timing Chords
+
+Read manifest.md from Task 1. You must OPEN and VALIDATE slice.html against that manifest FIRST. If you find a rotten or placeholder input, you must INPUT-REJECT it through your swarm channel rather than build on it. Write the complete script for the under-2-minute comedy s
+
+## Turn 1 (gemini-3.1-pro-preview)
+OUTPUT (exit 1):
+PROGRESS: no - no actions were sent, so nothing ran
+
+## Turn 2 (gemini-3.5-flash)
+OUTPUT (exit 1):
+PROGRESS: no - no actions were sent, so nothing ran
+
+## Turn 2 - DONE claimed (automatic: the real artifact passes and every twin fails)
+the gate could not reach a verdict: a model call in verify.py hit a resource wall (quota / rate limit) - a model/api problem, not a work failure; the claim stands and is re-judged on resume
+n is parseable - measured: True
+C2: PASS - script.json complies with schema - measured: True
+Calculated max offset_ms: 111000
+C3: PASS - runtime is between 60s and 119s - measured: True
+Unique pitches: {0.6, 1.8, 2.0, 0.5, 1.5}, unique rates: {0.8, 1.5, 0.6, 1.3, 1.6, 1.8}
+C4: PASS - voice parameters show variation - measured: True
+C5: PASS - no copyrighted names are used - measured: True
+C6: UNAVAILABLE - subjective comedy quality is >= 8 - verification could not run: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage
+VERIFICATION-UNAVAILABLE: a model call in verify.py hit a resource wall (quota / rate limit / 429) - not a work failure; the gate abstains and the task retries later
+
+## Seed born
+goal: Script and Timing Chords
+
+Read manifest.md from Task 1. You must OPEN and VALIDATE slice.html against that manifest FIRST. If you find a rotten or placeholder input, you must INPUT-REJECT it through your swarm channel rather than build on it. Write the complete script for the under-2-minute comedy s
+
+## Turn 1 (gemini-3.1-pro-preview)
+OUTPUT (exit 1):
+PROGRESS: no - no actions were sent, so nothing ran
+
+## Turn 2 (gemini-3.5-flash)
+OUTPUT (exit 1):
+PROGRESS: no - no actions were sent, so nothing ran
+
+## Turn 2 - DONE claimed (automatic: the real artifact passes and every twin fails)
+the gate could not reach a verdict: a model call in verify.py hit a resource wall (quota / rate limit) - a model/api problem, not a work failure; the claim stands and is re-judged on resume
+n is parseable - measured: True
+C2: PASS - script.json complies with schema - measured: True
+Calculated max offset_ms: 111000
+C3: PASS - runtime is between 60s and 119s - measured: True
+Unique pitches: {0.6, 1.8, 2.0, 0.5, 1.5}, unique rates: {0.8, 1.5, 0.6, 1.3, 1.6, 1.8}
+C4: PASS - voice parameters show variation - measured: True
+C5: PASS - no copyrighted names are used - measured: True
+C6: UNAVAILABLE - subjective comedy quality is >= 8 - verification could not run: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage
+VERIFICATION-UNAVAILABLE: a model call in verify.py hit a resource wall (quota / rate limit / 429) - not a work failure; the gate abstains and the task retries later
+
+## Seed born
+goal: Script and Timing Chords
+
+Read manifest.md from Task 1. You must OPEN and VALIDATE slice.html against that manifest FIRST. If you find a rotten or placeholder input, you must INPUT-REJECT it through your swarm channel rather than build on it. Write the complete script for the under-2-minute comedy s
+
+## Turn 1 (gemini-3.1-pro-preview)
+OUTPUT (exit 1):
+PROGRESS: no - no actions were sent, so nothing ran
+
+## Turn 2 (gemini-3.5-flash)
+OUTPUT (exit 1):
+PROGRESS: no - no actions were sent, so nothing ran
+
+## Turn 2 - DONE claimed (automatic: the real artifact passes and every twin fails)
+the gate could not reach a verdict: a model call in verify.py hit a resource wall (quota / rate limit) - a model/api problem, not a work failure; the claim stands and is re-judged on resume
+n is parseable - measured: True
+C2: PASS - script.json complies with schema - measured: True
+Calculated max offset_ms: 111000
+C3: PASS - runtime is between 60s and 119s - measured: True
+Unique pitches: {0.6, 1.8, 2.0, 0.5, 1.5}, unique rates: {0.8, 1.5, 0.6, 1.3, 1.6, 1.8}
+C4: PASS - voice parameters show variation - measured: True
+C5: PASS - no copyrighted names are used - measured: True
+C6: UNAVAILABLE - subjective comedy quality is >= 8 - verification could not run: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage
+VERIFICATION-UNAVAILABLE: a model call in verify.py hit a resource wall (quota / rate limit / 429) - not a work failure; the gate abstains and the task retries later
+
+## Seed born
+goal: Script and Timing Chords
+
+Read manifest.md from Task 1. You must OPEN and VALIDATE slice.html against that manifest FIRST. If you find a rotten or placeholder input, you must INPUT-REJECT it through your swarm channel rather than build on it. Write the complete script for the under-2-minute comedy s
+
+## Turn 1 (gemini-3.1-pro-preview)
+OUTPUT (exit 1):
+PROGRESS: no - no actions were sent, so nothing ran
+
+## Turn 2 (gemini-3.5-flash)
+OUTPUT (exit 1):
+PROGRESS: no - no actions were sent, so nothing ran
+
+## Turn 2 - DONE claimed (automatic: the real artifact passes and every twin fails)
+the gate could not reach a verdict: a model call in verify.py hit a resource wall (quota / rate limit) - a model/api problem, not a work failure; the claim stands and is re-judged on resume
+n is parseable - measured: True
+C2: PASS - script.json complies with schema - measured: True
+Calculated max offset_ms: 111000
+C3: PASS - runtime is between 60s and 119s - measured: True
+Unique pitches: {0.6, 1.8, 2.0, 0.5, 1.5}, unique rates: {0.8, 1.5, 0.6, 1.3, 1.6, 1.8}
+C4: PASS - voice parameters show variation - measured: True
+C5: PASS - no copyrighted names are used - measured: True
+C6: UNAVAILABLE - subjective comedy quality is >= 8 - verification could not run: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage
+VERIFICATION-UNAVAILABLE: a model call in verify.py hit a resource wall (quota / rate limit / 429) - not a work failure; the gate abstains and the task retries later
+
+## Seed born
+goal: Script and Timing Chords
+
+Read manifest.md from Task 1. You must OPEN and VALIDATE slice.html against that manifest FIRST. If you find a rotten or placeholder input, you must INPUT-REJECT it through your swarm channel rather than build on it. Write the complete script for the under-2-minute comedy s
+
+## Turn 1 (gemini-3.1-pro-preview)
+OUTPUT (exit 1):
+PROGRESS: no - no actions were sent, so nothing ran
+
+## Turn 2 (gemini-3.5-flash)
+OUTPUT (exit 1):
+PROGRESS: no - no actions were sent, so nothing ran
+
+## Turn 2 - DONE claimed (automatic: the real artifact passes and every twin fails)
+the gate could not reach a verdict: a model call in verify.py hit a resource wall (quota / rate limit) - a model/api problem, not a work failure; the claim stands and is re-judged on resume
+n is parseable - measured: True
+C2: PASS - script.json complies with schema - measured: True
+Calculated max offset_ms: 111000
+C3: PASS - runtime is between 60s and 119s - measured: True
+Unique pitches: {0.6, 1.8, 2.0, 0.5, 1.5}, unique rates: {0.8, 1.5, 0.6, 1.3, 1.6, 1.8}
+C4: PASS - voice parameters show variation - measured: True
+C5: PASS - no copyrighted names are used - measured: True
+C6: UNAVAILABLE - subjective comedy quality is >= 8 - verification could not run: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage
+VERIFICATION-UNAVAILABLE: a model call in verify.py hit a resource wall (quota / rate limit / 429) - not a work failure; the gate abstains and the task retries later
+
+## Seed born
+goal: Script and Timing Chords
+
+Read manifest.md from Task 1. You must OPEN and VALIDATE slice.html against that manifest FIRST. If you find a rotten or placeholder input, you must INPUT-REJECT it through your swarm channel rather than build on it. Write the complete script for the under-2-minute comedy s
+
+## Turn 1 (gemini-3.1-pro-preview)
+OUTPUT (exit 1):
+PROGRESS: no - no actions were sent, so nothing ran
+
+## Turn 2 (gemini-3.5-flash)
+OUTPUT (exit 1):
+PROGRESS: no - no actions were sent, so nothing ran
+
+## Turn 2 - DONE claimed (automatic: the real artifact passes and every twin fails)
+the gate could not reach a verdict: a model call in verify.py hit a resource wall (quota / rate limit) - a model/api problem, not a work failure; the claim stands and is re-judged on resume
+n is parseable - measured: True
+C2: PASS - script.json complies with schema - measured: True
+Calculated max offset_ms: 111000
+C3: PASS - runtime is between 60s and 119s - measured: True
+Unique pitches: {0.6, 1.8, 2.0, 0.5, 1.5}, unique rates: {0.8, 1.5, 0.6, 1.3, 1.6, 1.8}
+C4: PASS - voice parameters show variation - measured: True
+C5: PASS - no copyrighted names are used - measured: True
+C6: UNAVAILABLE - subjective comedy quality is >= 8 - verification could not run: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage
+VERIFICATION-UNAVAILABLE: a model call in verify.py hit a resource wall (quota / rate limit / 429) - not a work failure; the gate abstains and the task retries later
